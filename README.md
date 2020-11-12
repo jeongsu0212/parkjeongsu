@@ -203,7 +203,11 @@
 - 지금은 개발자가 (서버관리자통하지않고) 클라우드에 바로 배포.(대세)
 - 깃서버와 이클립스 소스 연동
 - 깃 저장 순서: 커밋(.git폴더에 저장) + 푸시(github.com에 저장) 
-- 
-
+- 이클립스 사용법:
+  퍼스펙티브(Perspective): 개발자 관점.(java, eGov개발자 관점)
+  관점이 너무 이상하게 변해있다면, window메뉴>Perspective>Reset~클릭으로 해결.
+- 파일저장: 화면상단 메뉴아이콘중 디스켓모양 클릭(Ctel +S)저장.
+- 좌측상단 package Explore 패키지탐색기로 보이게됨.
+-  
 - 코딩 참조 : stackoverflow
 - 오픈소스참조 : sourceforge : wamp 3.2 기본이 mariaDB 
