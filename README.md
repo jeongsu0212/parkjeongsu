@@ -343,3 +343,8 @@ CF-AppInvalid(100001): The app is invalid: VCAP::CloudController::BuildCreate::S
 - reset.css 를 불러오게 될예정. 이 역할은 아래
 - 크로스브라우징 사전처리 역할(아래)
 - IE, 크롬, 파이어폭스, 사파리(Sapari) 다양한 웹브라우저 콘텐츠가 같은 크기로 보이게 하는 역할
+
+*, :after, :before { /* :콜론의 의미 가상요소(선택자)
+    -webkit-box-sizing: border-box;/* 크롬,사파리용 크로스브라우징때문에 추가 */
+    -moz-box-sizing: border-box;/* 파이어폭스용 크로스브라우징때문에 추가 */
+    box-sizing: border-box; /* IE용 박스크기를 지정하는데 테두리포함하겠다는 의미 */
