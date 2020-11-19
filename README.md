@@ -353,8 +353,9 @@ CF-AppInvalid(100001): The app is invalid: VCAP::CloudController::BuildCreate::S
 - 500 Error: 스프링(자바)프로그램에러일때.
 - 자바스크립트: 종류 2가지.(아래)
 - 네이티브자바스크립트(고전): 오늘 배우고...
-- jQuery(현재트랜드): 앞으로 계속하고..
-- 콜백함수란?
+- jQuery(현재트랜드): 자바스크립트 프레임워크를 말합니다. j쿼리 코어라고 합니다.
+- j쿼리 사용법: 코어파일이 필요.(인터넷으로 가져와서 사용가능(CDN 방식)
+- 콜백함수란? 고전 함수처럼 함수명이 있는 것이 아니고, function()처럼 자동실행되는 함수
 - 함수형식(아래): 
   function add(a,b) {
   var sum = a+b;
