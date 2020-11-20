@@ -377,5 +377,8 @@ CF-AppInvalid(100001): The app is invalid: VCAP::CloudController::BuildCreate::S
 - 2. 영역분리하기: 클래스 이름 지정하기.
 - 3. CSS 적용하기: 자바스크립트 작업포함.
 - 4. CSS 분리하기: 테스트 후 마무리.
-
-
+- 페이지 강력새로고침 단축키:[ctrl]+[shift]+[r]
+- alter용어 Alt 교체하다는 의미. Alter table 명령 명령DB(더미테이터)
+- img태그의 Alt: 이미지가 나오지 않을때, 대체(대신)로 나오는 문자입니다.
+- 로렌입숨:(lorem ipsum; 줄여서 립숨(lipsum)
+- 한글 입숨: http:
