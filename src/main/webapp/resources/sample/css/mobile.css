@@ -2,7 +2,7 @@
 /* 모바일용 스타일지정 시작  */
 /* 헤더영역 시작 */
 .header {
-heigt:80px;
+height:80px;
 position:relative;/*상대적인 위치 다른예는 absolute절대적인위치=fixed붙박이*/
 padding:0px 2%;/*안쪽여백: 바깥쪽여백은 margin입니다. 18px(상하여백) 5%(좌우여백)*/
 /*padding:18px 5% 18px 5%; 시계방향으로진행 시작 위쪽부터 시작 의 약자 위 표시됨.
