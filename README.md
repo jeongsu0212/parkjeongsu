@@ -348,3 +348,18 @@ CF-AppInvalid(100001): The app is invalid: VCAP::CloudController::BuildCreate::S
     -webkit-box-sizing: border-box;/* 크롬,사파리용 크로스브라우징때문에 추가 */
     -moz-box-sizing: border-box;/* 파이어폭스용 크로스브라우징때문에 추가 */
     box-sizing: border-box; /* IE용 박스크기를 지정하는데 테두리포함하겠다는 의미 */
+- 대표적인 에러메세지:(HTTP status 웹브라우저 상태 에러 아래)
+- 404 not Found: 경로에 파일이 없을때
+- 500 Error: 스프링(자바)프로그램에러일때.
+- 자바스크립트: 종류 2가지.(아래)
+- 네이티브자바스크립트(고전): 오늘 배우고...
+- jQuery(현재트랜드): 자바스크립트 프레임워크를 말합니다. j쿼리 코어라고 합니다.
+- j쿼리 사용법: 코어파일이 필요.(인터넷으로 가져와서 사용가능(CDN 방식)
+- 콜백함수란? 고전 함수처럼 함수명이 있는 것이 아니고, function()처럼 자동실행되는 함수
+- 함수형식(아래): 
+  function add(a,b) {
+  var sum = a+b;
+- alert(a + "더하기" + b + " 는 " + sum + "입니다.");
+};
+  return sum;
+- 함수란? 입력값이 있고, 출력값이 있는 것을 함수.(사칙연산+,-,x...)
