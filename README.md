@@ -381,4 +381,6 @@ CF-AppInvalid(100001): The app is invalid: VCAP::CloudController::BuildCreate::S
 - alter용어 Alt 교체하다는 의미. Alter table 명령 명령DB(더미테이터)
 - img태그의 Alt: 이미지가 나오지 않을때, 대체(대신)로 나오는 문자입니다.
 - 로렌입숨:(lorem ipsum; 줄여서 립숨(lipsum)
-- 한글 입숨: http:
+- 한글 입숨: http://hangul.thefron.me/
+
+- 소스 이쁘게 만들기 이클립스 단축키 : source메뉴 > format 클릭하면 됩니다.
