@@ -48,34 +48,30 @@
 <!-- 상단 로고와 햄버거 메뉴영역 끝 -->
 </header>
 
-<section class="blog-section"><!-- division디비전이라는 div 영역표시 태그 대신에 사용 -->
-<h1>BLOG</h1>
+<section class="contact-section"><!-- division디비전이라는 div 영역표시 태그 대신에 사용 -->
+<h1>CONTACT</h1>
 <div class="container">
-<ul>
-	<li>
-	<a href="javascript;">
-	<img src="/resources/sample/img/street2.jpg" alt="블로그이미지1">
-	<time datetime="2020-11-23"><2020-11-23></time>
-	<h2>블로그게시물 제목1</h2>
-	</a>
-	</li>
-	<hr><!-- horizontal 수평선 태그 -->
-	<li>
-	<a href="javascript;">
-	<img src="/resources/sample/img/street.jpg" alt="블로그이미지2">
-	<time datetime="2020-11-23"><2020-11-23></time>
-	<h2>블로그게시물 제목2</h2>
-	</a>
-	</li>
-	<hr><!-- 수평선 태그 -->
-	<li>
-	<a href="javascript;">
-	<img src="/resources/sample/img/paris.jpg" alt="블로그이미지3">
-	<time datetime="2020-11-23"><2020-11-23></time>
-	<h2>블로그게시물 제목3</h2>
-	</a>
-	</li>
-</ul>
+<!-- 폼태그의 필수 속성, name, action-데이터를 전송할 대상값, method-데이터를 전송하는 방법값 -->
+<!-- input 한줄입력 태그, textarea 여러줄입력 태그 -->
+<!-- label은 이름표, 입력태그 -->
+<form name="message_form" action="contact.html" method="get">
+<!-- 필드셋은 폼이 DB테이블의 필드와 1:1매칭되는 관계 -->
+<fieldset>
+<legend>현재폼의 타이틀영역입니다.</legend>
+<label for="name">이름</label>
+<input name="name" id="name" type="text" value="박정수">
+<label for="phone">연락처</label>
+<input name="phone" id="phone" type="text" value="000-0000-0000">
+<label for="email">이메일</label>
+<input name="email" id="email" type="text" value="abc@abc.com">
+<lable for="message">메세지</lable>
+<textarea name="message" id="message">텍스트에어리어는 벨류값이 여기에 들어가는것이 특징입니다. </textarea>
+</fieldset>
+<button type="submit">메세지보내기</button>
+</form>
+<!-- form 태그의 목적은 input,textarea,checkbox,radio,select 데이터를 submit(전송)하는것이 목적. -->
+<!-- 폼전송은 get(비보안용), post(보안용-입력/수정/삭제) -->
+<!-- get방식은 유일하게 검색할때 사용됩니다. -->
 </div>
 </section>
 
