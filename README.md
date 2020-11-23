@@ -398,3 +398,6 @@ CF-AppInvalid(100001): The app is invalid: VCAP::CloudController::BuildCreate::S
 - 가상요소: 표시 a:hover::before(a링크에 마우스가 위에 떠 있을때의 a영역의 앞의 영역)
 - 화면전환효과: transition 속성을 사용.
 - contact.html : form태그(자료전송하는 역할,프로그램과 연동하는 부분이라서 중요함)
+- 공공클라우드(public cloud): 아마존, 구글클라우드, 헤로쿠- 정보를 클라우드 사업사
+	(정보유출:관공서X, 대학X, 대기업X (간단한 팀별로 프로토타입만 사용) 
+- 사설클라우드(private cloud): 파스타, 헤로쿠 - 고객회사 구축해서 사용.(정보유출 낮아서 관공서O,대학O)
