@@ -9,11 +9,25 @@
 <!-- 외부 자바스크립트 불러오는 태그(아래) -->
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script src="/resources/sample/js/user.js"></script>
-
 <!-- span태그 자리를 차지하지 않는 영역 = 한뼘 , px 픽셀 화면에 표시되는 크기의 단위 -->
 <!-- :콜론(속성:값, Key:Value), ;세미콜론(문장의 끝) -->
 <style>
-
+/*태블릿용 스타일 시작*/
+@media all and (min-width:768px) {
+/*we are 영역시작*/
+.float-clear {clear:both;}/*clear속성은 float작동을 없애는 역할*/
+.weare-body li {
+float:left;/*세로정렬을 가로정렬로 변경 부트스트랩의 그리드시스템 col-12(100%)의 원형*/
+width:23.046875%;/* (177 / 768)*100= 몇% */
+margin-left:2.604166%;/*(20 / 768)*100= 몇% */
+overflow:hidden;/*반응형list박스에서 가로크기를 벗어나는 이미지 내용은 숨김처리*/
+}
+.weare-body li:first-child {
+margin-left:0px;
+}
+/*we are 영역 끝*/
+}
+/*태블릿용 스타일 끝*/
 </style>
 <script>
 /* 자바스크립트 시작 */
@@ -79,11 +93,14 @@
 <img src="/resources/sample/img/dumbo.jpg" alt="갤러리게시물4">
 <h2>갤러리제목4</h2>
 <p>갤러리 게시물 4번의 내용 입니다. 여러분 환영합...</p>
-</a></li>
+</a>
+</li>
 </ul>
 </section>
+
 </section>
-<footer class="footer">
+
+<footer class="footer float-clear">
 <!-- 하단 로고 영역 시작 -->
 <p>LOGO</p><!-- p태그 문장영역을 의미하는 Paragraph 태그입니다. -->
 <!-- 하단 로고 영역 끝 -->
