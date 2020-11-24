@@ -408,4 +408,4 @@ CF-AppInvalid(100001): The app is invalid: VCAP::CloudController::BuildCreate::S
 - 모바일용 화면처리 작업마무리
 - 실행파일 확장자.jar(자바archive실행파일), .war(웹archive실행), 
 	.apk(안드로이드Package실행), add(안드로이드AppBundle실행)
-- alphA(알파)내부테스트,beta(베타)외부테스트, 프로덕션(상품)배포.
+- alphA(알파)내부테스트,beta(베타)외부테스트, 프로덕션(상품)배
