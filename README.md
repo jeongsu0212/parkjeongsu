@@ -401,3 +401,11 @@ CF-AppInvalid(100001): The app is invalid: VCAP::CloudController::BuildCreate::S
 - 공공클라우드(public cloud): 아마존, 구글클라우드, 헤로쿠- 정보를 클라우드 사업사
 	(정보유출:관공서X, 대학X, 대기업X (간단한 팀별로 프로토타입만 사용) 
 - 사설클라우드(private cloud): 파스타, 헤로쿠 - 고객회사 구축해서 사용.(정보유출 낮아서 관공서O,대학O)
+####20201124(화) 작업
+- 태블릿용,PC용 화면처리 작업시작.
+- 단원2-2 상세설계부분 이론예정
+- index.html 파일에서 슬라이드부분 적용(부트스트랩-외부j쿼리라이브러리이용)
+- 모바일용 화면처리 작업마무리
+- 실행파일 확장자.jar(자바archive실행파일), .war(웹archive실행), 
+	.apk(안드로이드Package실행), add(안드로이드AppBundle실행)
+- alphA(알파)내부테스트,beta(베타)외부테스트, 프로덕션(상품)배포.
