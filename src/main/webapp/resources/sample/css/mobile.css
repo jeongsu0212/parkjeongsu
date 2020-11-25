@@ -68,7 +68,7 @@ color:#fff;
 /* 본문섹션 슬라이드영역 끝 */
 /* 푸터영역 시작 */
 .footer {
-margin-top:30px;
+padding-top:30px;/*margin-top 작동하지 않아서 padding-top로 변경*/
 }
 .footer p {
 margin: 21px 0px;
