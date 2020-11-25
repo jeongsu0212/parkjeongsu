@@ -401,6 +401,7 @@ CF-AppInvalid(100001): The app is invalid: VCAP::CloudController::BuildCreate::S
 - 공공클라우드(public cloud): 아마존, 구글클라우드, 헤로쿠- 정보를 클라우드 사업사
 	(정보유출:관공서X, 대학X, 대기업X (간단한 팀별로 프로토타입만 사용) 
 - 사설클라우드(private cloud): 파스타, 헤로쿠 - 고객회사 구축해서 사용.(정보유출 낮아서 관공서O,대학O)
+-----------------------------------------------------------------------
 ####20201124(화) 작업
 - 태블릿용,PC용 화면처리 작업시작.
 - 단원2-2 상세설계부분 이론예정
@@ -409,3 +410,25 @@ CF-AppInvalid(100001): The app is invalid: VCAP::CloudController::BuildCreate::S
 - 실행파일 확장자.jar(자바archive실행파일), .war(웹archive실행), 
 	.apk(안드로이드Package실행), add(안드로이드AppBundle실행)
 - alphA(알파)내부테스트,beta(베타)외부테스트, 프로덕션(상품)배
+----------------------------------------------------------------------
+####20201125(수) 작업
+- HTML(Hyper-Text-Markup-Language)+CSS(Cascade-Style-Sheet)+JS(JavaScript)
+- 위 3가지 작업으로 결과물을 만드는 사람을 퍼블리셔라고 한다.=프론트엔드 개발자.
+- 웹접근성(WebAccessbility): 사이트의 장애인 이용 가능성을 체크.(프로젝트 제안요청서에 항상 포함됨)
+- 크로스브라우징(Cross Browsing): 다양한 웹브라우저에서 콘텐츠가 깨지는지 확인(프로젝트 제안요청서에 항상 포함됨)
+- UI(User Interface)테스트: 사용성 테스트.
+- CLI(Command Line Interface): 예, cf cli 프로그램설치(파스타)
+- GUI(Graphic User Interface): 예, 이클립스에서 파스타 서버사용.
+- HTML5 표준으로 만들어야한다: 제약조건.
+- 
+- 유스케이스다이어그램(이클립스): 관계(릴레이션-Relation)
+- 관계: Generalization(일반화) - 부모-자식(상속관계)
+- 관계 일반화란? 자식들(SUV,소형차,중형차,대형차)-cextend > 부모(자동차-일반화)-generalize
+- 관계 include? 포함관계, footer.jsp(하단Logo) > home.jsp < header.jsp(상단메뉴,로고포함)
+- 관계 extend> 확장관계(상속관계)
+- 테이블태그: <table><th></th><tr></tr></table>
+	tr: table row: 테이블의 가로 
+	th: table head: 테이블의 가로선내에 제일 상단에 있는 컬럼(필드)
+	td: table data: 테이블의 가로선내의 컬럼(필드)데이터 영역.
+- 
+----------------------------------------------------------------------------

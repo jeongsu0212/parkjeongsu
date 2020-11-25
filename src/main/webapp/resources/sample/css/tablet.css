@@ -45,3 +45,10 @@ margin-left:0px;
 }
 /*we are 영역 끝*/
 	}
+	/*work 영역 시작*/
+.work-section li {/*세로배치를 가로로 변경*/
+float:left;
+width:50%;
+
+}
+/*work 영역 끝*/
