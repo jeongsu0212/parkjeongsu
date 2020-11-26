@@ -34,5 +34,12 @@ content:"";
 }
 /*weare 영역 끝*/
 
+/*work영역 시작*/
+.work-section .section-title {
+text-align:left;
+margin-left:3%;
+}
+.work-section li {width:25%;}/* 전체 100%/4 =25% */
+/*work영역 끝*/
 }
 /*PC용 스타일 끝*/
