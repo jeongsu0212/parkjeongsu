@@ -23,6 +23,10 @@
 - 패키지를 사용하는 이유: 자바클래스를 기능별로 묶어놓기 위해서 명시적으로 만든 묶음.<br> -->
 
 <%@ include file="./include/header.jsp" %>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- 위 부트스트랩코어 입니다. -->
 <section><!-- division디비전이라는 div 영역표시 태그 대신에 사용 -->
 <!-- 본문 슬라이드 영역 시작 -->
 <!-- 이미지를 불러오는 태그 img -->

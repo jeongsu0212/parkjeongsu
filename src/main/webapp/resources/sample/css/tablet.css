@@ -47,6 +47,8 @@ margin-left:0px;
 .work-section li {
 float:left;/*세로배치를 가로배치로 변경*/
 width:50%;
+max-heght:300px;
+overflow:hidden;
 }
 /*work영역 끝*/
 

@@ -26,8 +26,25 @@ public class HomeController {
 	 * 그래서, 저장시 콜솔에 보면, Reloading Context with... is completed 재실행 되었다고 나옴.
 	 * 그래서, .java 클래스는 수정 후 약간 기다린후 Reloading... 메시지 후 결과 확인이 가능함.
 	 */
+	@RequestMapping(value="/contact",method=RequestMethod.POST)//post방식은 데이터를 전송하는 역할
+	public String contact_send() {
+		//데이터 전송후에 페이지이동이 필요함. 새로고침=자동등록을 방지하기 위해서(도배방지).
+		return "redirect:/blog";//URL절대경로를 사용.
+	}
+	@RequestMapping(value="/contact",method=RequestMethod.GET)//get방식은 폼페이지를 보여주는 역할
+	public String contact() {
+		return "sample/contact";
+	}
+	@RequestMapping(value="/blog",method=RequestMethod.GET)
+	public String blog() {
+		return "sample/blog";
+	}
+	@RequestMapping(value="/work",method=RequestMethod.GET)
+	public String work() {
+		return "sample/work";
+	}
 	@RequestMapping(value="/weare",method=RequestMethod.GET)
-	public String weare( ) {
+	public String weare() {
 		//외부에서 /weare 경로로 접근했을때, sample/weare.jsp와 매핑시키라는 의미.
 		return "sample/weare";
 	}
