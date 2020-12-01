@@ -463,7 +463,8 @@ CF-AppInvalid(100001): The app is invalid: VCAP::CloudController::BuildCreate::S
 - dist: distribute(배포)하는 폴더명, 이 폴더만 있으면 실행이 가능합니다.
 -----------------------------------------------------------------------------
 ####1201 작업
-- AdminLTE로 만드는 스프링 관리자 메인 화면구현 마무리.
+-
+- AdminLTE로 만드는 스프링 관리자 메인 html화면구현 마무리.
 - 관리자관리: member_list.html, member_view.html, member_write.html
 - 게시물관리: board_list.html, board_view.html, board_write.html
 - 
