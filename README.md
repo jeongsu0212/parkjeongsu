@@ -461,7 +461,12 @@ CF-AppInvalid(100001): The app is invalid: VCAP::CloudController::BuildCreate::S
 	첫쨰, 부트스트랩.
 	둘째, chart(빅데이터 시각화할때 사용 JS템플릿)
 - dist: distribute(배포)하는 폴더명, 이 폴더만 있으면 실행이 가능합니다.
-
+-----------------------------------------------------------------------------
+####1201 작업
+- AdminLTE로 만드는 스프링 관리자 메인 화면구현 마무리.
+- 관리자관리: member_list.html, member_view.html, member_write.html
+- 게시물관리: board_list.html, board_view.html, board_write.html
+- 
 
 
 
