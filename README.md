@@ -467,8 +467,19 @@ CF-AppInvalid(100001): The app is invalid: VCAP::CloudController::BuildCreate::S
 - AdminLTE로 만드는 스프링 관리자 메인 html화면구현 마무리.
 - 관리자관리: member_list.html, member_view.html, member_write.html
 - 게시물관리: board_list.html, board_view.html, board_write.html
-- 
+- 관리자단 html화면구현한 내용을 jsp 만들어서 컨트롤러자바클래스에서 링크만 걸어줍니다.
 
+-----------------------------------------------------------------------------
+####1202 작업
+- 게시판 html화면 구현하기 전, 관리자관리 부분 제어용 컨트롤러 클래스 만들고 있음.
+- admin/include/header.jsp의 메뉴링크를 html상대경로에서 Admin컨트롤러의 절대경로로 변경처리.(아래)
+- /admin/member_list(관리자관리 메뉴와 바인딩), /admin/board_list(게시물관리 메뉴와 바인딩)
+- 상대경로: ./(현재폴더위치), ../(상위폴더위치), 파일위치를 지정할때 사용. return(스프링 반환값)
+- 절대경로: URL경로(웹브라우저로 접근가능한경로)를 사용할떄. @RequestMapping에서(스프링)
+- admin폴더에는 크게 2가지기능: 관리자관리(member폴더에), 게시물관리(board폴더에)(위)
+- admin컨트롤러 클래스에서 URL경로와 실제 jsp파일과 바인딩처리.OK
+- jsp파일에서 폼 action속성값이동==button타입 submit값, 링크경로를 html경로에서 컨트롤러의 바인딩경로로 변경.
+- 
 
 
 
