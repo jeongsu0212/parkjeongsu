@@ -479,6 +479,9 @@ CF-AppInvalid(100001): The app is invalid: VCAP::CloudController::BuildCreate::S
 - admin폴더에는 크게 2가지기능: 관리자관리(member폴더에), 게시물관리(board폴더에)(위)
 - admin컨트롤러 클래스에서 URL경로와 실제 jsp파일과 바인딩처리.OK
 - jsp파일에서 폼 action속성값이동==button타입 submit값, 링크경로를 html경로에서 컨트롤러의 바인딩경로로 변경.
+
+=================================================================================
+####1203
 - 
 
 

@@ -109,7 +109,7 @@
             </a>
             <ul class="nav nav-treeview">
               <li class="nav-item">
-                <a href="/admin/member_list" class="nav-link">
+                <a href="/admin/member/member_list" class="nav-link">
                 <!-- 메뉴선택시 활성화(active)되는것은 j쿼리로 만들예정(위) -->
                   <i class="far fa-circle nav-icon"></i>
                   <p>관리자 관리</p>
