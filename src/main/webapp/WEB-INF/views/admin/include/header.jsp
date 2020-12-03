@@ -116,7 +116,7 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a href="/admin/board_list" class="nav-link">
+                <a href="/admin/board/board_list" class="nav-link">
                   <i class="far fa-circle nav-icon"></i>
                   <p>게시물 관리</p>
                 </a>
