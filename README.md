@@ -482,7 +482,7 @@ CF-AppInvalid(100001): The app is invalid: VCAP::CloudController::BuildCreate::S
 
 =================================================================================
 ####1203
-- jsp 화면에서 데이터 전송하기
+- 오라클 
 
 
 
