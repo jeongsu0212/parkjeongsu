@@ -36,7 +36,7 @@ abstract class GraghicObject {
 	//다른 해석하면, 책에서 목차만 있고, 내용이 없는 구조. 내용은 별도의 클래스에 있음.
 }
  class Triangle extends GraghicObject {
-	//메서드 오버라이드(메서드 이름이 같은것을 상속관계에서 실행)
+	//메서드 오버라이드(메서드 이름이 같은것을 상속관계에서 실행)=부모 메서드 재정의, 대표적인 다형성을 구현.
 	 @Override
 	 void draw( ) {
 		 System.out.println("  *");
