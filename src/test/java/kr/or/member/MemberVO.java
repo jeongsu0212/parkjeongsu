@@ -2,6 +2,7 @@ package kr.or.member;
 
 public class MemberVO {
 	//멤버변수 만들기(아래)
+	//직접접근이 불가능
 		private String name;
 		private int age;
 		private String phoneNum;
