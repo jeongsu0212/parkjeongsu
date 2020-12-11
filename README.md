@@ -569,7 +569,39 @@ java.lang패키지: Thread클래스는 통신프로그램에서 사용(안드로
 member_list.jsp에서 MemberVO 클래스 테스트 사용 예정(아래).
 데이터 타입에 대해서 배열타입과 리스트타입 그리고, 해시타입
 2차원 배열타입 변수 -> 클래스오브젝트 배열타입 변수으로 변경 -> 클래스오브젝트 List타입 변수로 변경
-
+----------------------------------------------------------------------
+####1209
+Rest API방식으로 화면을 처리것이 트렌드 입니다.(빅데이터를 시각화하는 데 RestAPI+Ajax 기술사용)
+Rest: Representation 기존데이터를 가지고, 화면 깜빡임 없이 데이터를 재가공하는 처리.
+REST API사용되는 기술: 데이터 전송/수신 Ajax기술(프론트-개발자)로 처리. API(서버단기술)
+Ajax: Asyncronized Javascript and Xml 비동기 통신으로 자바스크립트로 Json(text자료)를 재처리하는 기술.
+스프링관리자 AdminLTE템플릿 폰트어썸아이콘: 아래 템플릿에서 icon메뉴에서 fontAswesome 항목 클릭
+스프링관리자 AdminLTE템플릿 샘플: https://adminlte.io/themes/v3/pages/forms/general.html
+오후에는 스프링 관리자단에서 [게시물 관리] 메뉴 webapp/resources/html만들고, -> jsp변환 작업이어서 합니다.
+prefix(jstl), suffix(servlet-context.xml)
+prefix ,suffix 그냥 경로의 앞부분 뒷부분 생략가능하게 만드는 역할
+@RequestMapping...반환값에서 prefix(/WEB-INF/views/)가 사용, suffix(.jsp)
+...
+  return "{prefix}admin/board/board_list{suffix}";
+...
+아래에서 사용된 prefix는 생략가능하다.
+<beans:property name="prefix" value="/WEB-INF/views/" />
+아래에서 사용된 suffix는 생략가능하다.
+<beans:property name="suffix" value=".jsp" />
+전체 틀(아래 읽으시면) : 자바이론 공부하신, 아래 데이터 흐름을 제어하는데 사용.
+여러명의 회원 정보(MemberVO-자료형클래스를이용부분)를
+전달주고받고(MainControler-메서드,URL호출부분),
+출력(MemberService-비지니스로직부분)하는 메소드 선언하기
+미지의 부분 -----------------------------------------
+데이터베이스CRUD처리부분(MemberDAO-데이터베이스엑세스부분)
+for (MemberVO member : members) {// members여러 레코드중 1개의 레코드를 member오브젝트객체로 대입
+1번째반복-> members[0]레코드데이터=>MemberVO member객체벼수 =>출력시 member.toString();
+2번째반복-> members[1]레코드데이터=>MemberVO member객체변수 =>출력시 member.toString();
+3번째반복-> members[2]레코드데이터=>MemberVO member객체변수 =>출력시 member.toString();
+--------------------------------------------------------------------
+####1210 작업
+- 모달(Modal): 팝업대화상자 내용을 종료하기 전에는 다른 화면으로 이동하지 못하는 방식 팝업창.
+- 모달리스(Modeless): 이용자가 팝업대화상자 내용을 종료하기 전이라도, 현재 팝업창을 띄운상태에서 다른 창으로 이동가능.
 
 
 
