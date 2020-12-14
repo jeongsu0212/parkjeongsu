@@ -657,6 +657,9 @@ for (MemberVO member : members) {// members여러 레코드중 1개의 레코드
 ----------------------------------------------------------------------------
 #### 20201214(월) 작업
 - 지금하시는 작업은 개발시작전 준비단계....
+- JUnit테스트(자바단위테스트): 하는 목적은 jsp(컨트롤러) 힘빼기전에 CRUD테스트해보고 힘빼라는 작업방식.
+- jsp -> controller -> service -> dao -> mapper.xml -> DB(Mysql,Oracle)
+- 자바단위테스트(JUnit)	-> service -> dao -> mapper.xml -> DB
 - 톰캣/JUnit 실행해야만, DB가 연동이 됩니다.
 - 톰캣이 종료되거나, JUnit테스트가 끝나면, DB연동이 끊어집니다.
 - JUnit테스트 준비OK.
