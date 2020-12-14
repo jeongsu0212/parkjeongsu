@@ -16,6 +16,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 
 //스프링에서 사용가능한 클래스를 빈(커피Been)이라고 하고, @Controller 클래스를 사용하면 됨.
@@ -25,9 +26,25 @@ public class AdminContorller {
 	@Inject
 	SecurityCode securityCode;
 
+	
+	@RequestMapping(value="/admin/board/board_write",method=RequestMethod.GET)
+	public String board_wirte() throws Exception {
+		return "admin/board/board_write";
+	}
+	@RequestMapping(value="/admin/board/board_write",method=RequestMethod.POST)
+	public String board_wirte(MultipartFile file, BoardVO boardVO) throws Exception {
+		//post로 받은 boardVO내용을 DB서비스에 입력하면 됩니다.
+		//DB에 입력후 새로고침명령으로 게시물 테러를 당하지 않으려면, recirect로 이동처리 함.(아래)
+		return "redirect:/admin/board/board_list";
+	}
+	
 	@RequestMapping(value="/admin/board/board_view",method=RequestMethod.GET)
-	public String board_view(Model model) throws Exception {
+	public String board_view(@RequestParam("bno") Integer bon, Model model) throws Exception {
 		//jsp로 보낼 더미 데이터 boardVO에 담아서 보냄.
+		//실제로는 아래처럼 더미데이터를 만드는것이 아닌
+		//쿼리스트링(질의문자열)로 받아온 bno(게시물 고유번호)를 이용해서 DB에서
+		//select * from tbl_board where bno = ? 마이바티스 실행이 된 결과 값이 BoardVO형으로 받아서 jsp로 보내줌.
+		//'3', '새로운 글을 넣습니다. ', '새로운 글을 넣습니다. ', 'user00', '2019-10-10 12:25:36', '2019-10-10 12:25:36', '0', '0'
 		BoardVO boardVO = new BoardVO();
 		boardVO.setBno(1);
 		boardVO.setTitle("첫번째 게시물 입니다.");
