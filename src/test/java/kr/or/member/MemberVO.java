@@ -1,5 +1,13 @@
 package kr.or.member;
 
+import org.springframework.stereotype.Component;
+
+/**
+ * 
+ * @author 박정수
+ *
+ */
+@Component
 public class MemberVO {
 	//멤버변수 만들기(아래)
 	//직접접근이 불가능

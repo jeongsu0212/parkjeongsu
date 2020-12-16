@@ -11,7 +11,8 @@ public class MemberService {
 				//MemberVO클래스형 데이터 타입을 member 변수로 만듬.
 				cnt = cnt + 1;
 				System.out.println(cnt +" 번째 레코드는" + member.toString());
-				
+				//member 클래스변수는 출력이 가능하지만, 내용은 확인할 수 없게 됨.
+				//member 클래스에서 내용을 확인하려고, 오버라이드된 toString()만들어서 출력하게 됨.
 			}
 			//데이터를 가공한다.(아래)
 			//위처럼 데이터 select가져오기, insert입력하기,update수정하기
