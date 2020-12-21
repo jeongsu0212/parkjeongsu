@@ -108,6 +108,11 @@ public class DataSourcesTest {
 		PageVO pageVO = new PageVO();
 		pageVO.setSearch_type("user_name");
 		pageVO.setSearch_keyword("홍길동");
+		//아래3개줄은 초기 페이징처리에 필요한 필수값 저장
+		pageVO.setPage(1);
+		pageVO.setPerPageNum(5);//리스트 하단에 보여지는 페이지번호의 개수
+		pageVO.setQueryPerPageNum(10);//쿼리에서 1페이지당 보여줄 회원수 10명으로 입력해 놓음.
+		
 		List<MemberVO> memberList =memberDAO.selectMember(pageVO);
 		System.out.println("회원리스트 테스트 입니다.");
 		System.out.println(memberList.toString());

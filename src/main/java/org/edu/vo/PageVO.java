@@ -14,9 +14,9 @@ package org.edu.vo;
 public class PageVO {
 	//예를 들면 변수중에 boolean(일반형데이터형 변수)-null값이들어가면 에러 / boolean(대문자로시작 클래스형 변수-Null로 입력되었을때 처리하는 로직이 들어있음.)
 	private int perPageNum;//페이징리스트 목록의 개수변수(리스트 하단에 보이는 번호의 개수)
-	private int perQueryPageNum;//1페이지당 출력할 개수값이 들어가는 변수
+	private int queryPerPageNum;//쿼리에서 사용하는 1페이지당 출력할 개수를 나타내는 변수
 	private Integer page;//jsp에서 선택한 페이지 번호 변수
-	private int startNo;//[계산식]을 이용해서 나오는 값을 쿼리에서 사용될 시작번호값이 들어가는 변수
+	private int queryStartNo;//쿼리에서 사용되는 시작인덱스값 변수
 	private boolean prev;//[계산식]페이징에서 이전 번호가 있을때 표시값이 들어가는 변수
 	private boolean next;//[계산식]페이징에서 이후 번호가 있을때 표시값이 들어가는 변수
 	//위에 생성 프리뷰, 넥스트 변수값이 있는지 없는지 확인하려면, [계산식]이 필요합니다. 계산할때 필요한 변수 3개가 필요(아래)
@@ -49,10 +49,11 @@ public class PageVO {
 		//jsp에서 11을 클릭했을때 (20-10) + 1 = 11 스타트 페이지 값(위)
 		//(아래) 20x10 =200의 레코드(회원[게시물])
 		//만약 회원[게시물] 195개 일 경우가 있습니다.
-		if(tempEnd*this.perPageNum > this.totalCount) {//200>195 일 경우
+		if(tempEnd*this.queryPerPageNum > this.totalCount) {//200>195 일 경우
+			//임시끝페이지x쿼리에서 1페이지당 출력할 개수 > 실제전체개수
 			//클릭한 page번호로 계산된 게시물수가 실제 게시물수(totalCount) 보다 클때
 			this.endPage = (int)Math.ceil(
-					this.totalCount/(double)this.perPageNum
+					this.totalCount/(double)this.queryPerPageNum
 					);// 195/10 = 20 19.9 19.8 ...19.5 결과적으로 20이 출력
 		} else {
 			//전체 회원[게시물]수가 195일때 page 1을 클릭한 경우 100 > 195
@@ -63,7 +64,7 @@ public class PageVO {
 		//아래는 prev, next 구하는 계산식
 		this.prev = (this.startPage != 1);//예) 스타트페이지 11 결과값은 true
 		//시작페이지가 1보다 크면 무조건 이전 페이지가 있다고 봄.(위)
-		this.next = (this.endPage*this.perPageNum < this.totalCount);
+		this.next = (this.endPage*this.queryPerPageNum < this.totalCount);
 		//20x10 < 195 결과는 false 이기 때문에 jsp에서 > 안보이게 처리함.
 		//예)  < 11 12 13 14 15 16 17 18 19 20(tempPage) [>] 시작11과 끝 20
 	}
@@ -81,16 +82,16 @@ public class PageVO {
 	public void setPage(Integer page) {
 		this.page = page;
 	}
-	public int getStartNo() {
+	public int getQueryStartNo() {
 		//DB쿼리에서 사용 결과값은 시작 인덱스번호(0)를 구하는 계산식(아래)
 		//계산식 = (jsp에서 클릭한 페이지번호 -1)*페이지당 보여지는 개수
 		//1페이지계산 [1페이지당출력할개수]x10(1[몇번째페이지번호]-1 =0 1페이지일떄
 		//2페이지계산 10x(2-1) = 10[계산결과나온 시작페이지번호] 2페이지일때
-		startNo = perQueryPageNum*(this.page-1);//개발자가 추가한 계산식//perPageNum=5
-		return startNo;
+		queryStartNo = queryPerPageNum*(this.page-1);//개발자가 추가한 계산식//queryPerPageNum=5
+		return queryStartNo;
 	}
-	public void setStartNo(int startNo) {
-		this.startNo = startNo;
+	public void setQueryStartNo(int queryStartNo) {
+		this.queryStartNo = queryStartNo;
 	}
 	public boolean getPrev() {
 		return prev;
@@ -138,12 +139,12 @@ public class PageVO {
 		this.search_keyword = search_keyword;
 	}
 
-	public int getPerQueryPageNum() {
-		return perQueryPageNum;
+	public int getQueryPerPageNum() {
+		return queryPerPageNum;
 	}
 
-	public void setPerQueryPageNum(int perQueryPageNum) {
-		this.perQueryPageNum = perQueryPageNum;
+	public void setQueryPerPageNum(int queryPerPageNum) {
+		this.queryPerPageNum = queryPerPageNum;
 	}
 	
 }

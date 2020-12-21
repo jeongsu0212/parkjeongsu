@@ -802,6 +802,24 @@ DataSource(커넥션)-sqlSessionFactory(쿼리생성)-sqlSessionTemplate(쿼리�
 - 위 명세서는 https://www.gitbook.com/ 여기서 작업해서 만듭니다. 또는 pptx로 만듭니다.
 - PK(식별자): Primary Key(기본키,고유키) 주민번호와 같은 우리나라에서 1개인 값.
 - 테이블에서 고유한 PK: 엔티티에서 유일한 값.
-
+-------------------------------------------------------------
+#### 1221 월 작업
+- 신규페이지 작업시 순서: 쿼리 > DAO > Service > Controller > jsp
+- 리스트, 검색, 페이징 처리OK.
+- 로그4j에 레벨: debug < warn < info 오른쪽 일수록 더 자세한 로그가 출력이 됩니다.
+- 마리아DB실행(만세아이콘)->워크벤치실행->이클립스실행
+- 통합구현 NCS학습모듈 이론 2-1단원.
+- 변수변경1: 쿼리에서 사용되는 시작인덱스 startNo 변수를 queryStartNo 으로 변경예정
+- 변수변경2: 쿼리에서 사용되는 1페이지당출력할개수 perQueryPageNum 변수를 queryPerPageNum 으로 변경예정
+- totalCount가 들어가는 계산식 변경(아래)
+- tempEnd*this.perQueryPageNum > this.totalCount (임시끝페이지x쿼리에서1페이지당출력할개수 > 실제전체개수)
+- this.totalCount/(double)this.queryPerPageNum (실제전체개수/쿼리에서1페이당출력할개수)
+- this.endPage*this.perQueryPageNum < this.totalCount (계산된끝페이지x쿼리에서1페이지당출력할개수 > 실제전체개수)
+- queryStartNo(쿼리시작인덱스) = perQueryPageNum*(this.page-1);//2페이지계산 10x(2-1) = 10[계산결과나온 시작페이지번호]
+- 리스트 출력전 페이징 처리부터 해야 하기 때문에 selectMember호출보다 위로 이동
+- @ModelAttribute("pageVO") 원래 이것을 사용하는 목적은 jsp에서 받을 때 필요 여기선 필요없음
+- log4j.xml 로그 등급 변경 및 dtd(Document Type Define)문서타입정의를 아래로 변경예정
+- 더미데이터 입력: 데이터베이스 프로시저(DB전용프로그램방식) 사용예정.
+- 스프링웹프로젝트 ERD만들고, 물리DB생성 후 프로지서 사용 연습예정.(더 자세히는 7번째과목 SQL활용에서 다룹니다.)
 
 
