@@ -77,6 +77,7 @@
             </div>
             <!-- 버튼영역 끝 -->
             <input type="hidden" name="user_id" value="${memberVO.user_id}">
+            <input type="hidden" name="page" value="${pageVO.page}">
           </form>
           </div>
         </div>
@@ -86,7 +87,6 @@
     <!-- /.content -->
   </div>
   <!-- /.content-wrapper -->
-
 
 <%@ include file="../include/footer.jsp" %>
 <script>
@@ -100,7 +100,7 @@ $(document).ready(function(){
 	});
 	
 	$("#updateBtn").bind("click", function(){
-		$("#action_form").attr("action,","/admin/member/member_update");
+		$("#action_form").attr("action","/admin/member/member_update");
 		$("#action_form").attr("method","get");
 		$("#action_form").submit();
 	});

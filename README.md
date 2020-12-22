@@ -822,4 +822,21 @@ DataSource(커넥션)-sqlSessionFactory(쿼리생성)-sqlSessionTemplate(쿼리�
 - 더미데이터 입력: 데이터베이스 프로시저(DB전용프로그램방식) 사용예정.
 - 스프링웹프로젝트 ERD만들고, 물리DB생성 후 프로지서 사용 연습예정.(더 자세히는 7번째과목 SQL활용에서 다룹니다.)
 
-
+-----------------------------------------------------------------------
+#### 1222 화 작업
+- 한글이 POST시 깨지는 문제: web.xml에서 한글처리를 위한 UTF-8필터 추가(*필수*)
+```
+<!--  ...한글처리를 위한 UTF-8 필터 추가 -->
+	<filter>
+	  <filter-name>encoding</filter-name>
+	  <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+	  <init-param>
+	   <param-name>encoding</param-name>
+	   <param-value>UTF-8</param-value>
+	  </init-param>
+	</filter>	
+	<filter-mapping>
+	  <filter-name>encoding</filter-name>
+	  <url-pattern>/*</url-pattern>
+	</filter-mapping>
+```

@@ -102,14 +102,33 @@ public class AdminContorller {
 	
 	//메서드 오버로딩(예, 동영상 로딩중..., 로딩된 매개변수가 다르면, 메서드이름을 중복사용가능함.)
 	@RequestMapping(value="/admin/member/member_write",method=RequestMethod.POST)
-	public String member_write(@RequestParam("user_name") String user_name) throws Exception {
+	public String member_write(MemberVO memberVO) throws Exception {
 		//아래 GET방식의 폼 출력화면에서 데이터 전송받은 내용을 처리하는 바인딩.
 		//DB베이스 입력/출력/삭제/수정 처리-다음에...
+		memberService.insertMember(memberVO);
 		return "redirect:/admin/member/member_list";//절대경로로 처리된 이후에 이동할 URL주소를 여기에 반환값
 	}
 	@RequestMapping(value="/admin/member/member_write",method=RequestMethod.GET)
 	public String member_write() throws Exception {
 		return "admin/member/member_write";
+	}
+	
+	
+	@RequestMapping(value="/admin/member/member_update",method=RequestMethod.GET)
+	public String member_update(@RequestParam("user_id") String user_id, @ModelAttribute("pageVO") PageVO pageVO, Model model) throws Exception{
+		//GET방식으로 업데이트 폼파일만 보여줍니다.
+		MemberVO memberVO = memberService.readMember(user_id);
+		model.addAttribute("memberVO", memberVO);
+		return "admin/member/member_update";
+	}
+	
+	@RequestMapping(value="/admin/member/member_update",method=RequestMethod.POST)
+	public String member_update(PageVO pageVO, MemberVO memberVO) throws Exception {
+		//POST방식으로 넘어온 값을 DB수정처리하는 역할
+		memberService.updateMember(memberVO);
+		//redirect를 사용하는 목적은 새로고침했을때, 위 updateMember메서드를 재 실행방지 목적입니다.
+		//일반 return은 상대경로이지만 , return redirect은 절대경로로 지정한다.
+		return "redirect:/admin/member/member_view?page="+pageVO.getPage()+"&user_id=" + memberVO.getUser_id();
 	}
 	
 	@RequestMapping(value="/admin/member/member_delete",method=RequestMethod.POST)
