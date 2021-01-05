@@ -6,12 +6,12 @@ import org.springframework.stereotype.Controller;
 @Controller
 public class SecurityCode {
 	/**
-	 * XSS 방지처리. Cross Site Script 약자 XSS 교차 사이트스크립트 방지하는 코드(아래)
-	 * 
-	 * @param date
-	 * @return 
-	 */
-	public String unscript(String data) {
+     * XSS 방지 처리. Cross Site Script 약자 XSS 교차 사이트스크립트 방지하는 코드(아래)
+     *
+     * @param data
+     * @return
+     */
+    public String unscript(String data) {
         if (data == null || data.trim().equals("")) {
             return "";
         }

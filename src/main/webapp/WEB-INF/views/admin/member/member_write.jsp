@@ -2,8 +2,8 @@
     pageEncoding="UTF-8"%>
 <%@ include file="../include/header.jsp" %>
 
-   <!-- 대시보드 본문 Content Wrapper. Contains page content -->
-   <div class="content-wrapper">
+  <!-- 대시보드 본문 Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
     <!-- 본문헤더 Content Header (Page header) -->
     <div class="content-header">
       <div class="container-fluid">
@@ -99,8 +99,7 @@
     </section>
     <!-- /.content -->
   </div>
-   <!-- /.content-wrapper -->
-
+  <!-- /.content-wrapper -->
 
 <%@ include file="../include/footer.jsp" %>
 <script>
@@ -123,7 +122,7 @@ $(document).ready(function() {
 				}else{
 					//에러메세지출력
 					//alert(result);//개발자용
-					alert('API서버에 문제가 발생했습니다. 나중에 이용해 주세요.');
+					alert('API서버에 문제가 발생했습니다. 나중에 이용해 주세요');
 				}
 			}
 		});

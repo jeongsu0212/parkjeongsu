@@ -2,9 +2,10 @@
     pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ include file="../include/header.jsp" %>
 
- <!-- 대시보드 본문 Content Wrapper. Contains page content -->
+  <!-- 대시보드 본문 Content Wrapper. Contains page content -->
   <div class="content-wrapper">
     <!-- 본문헤더 Content Header (Page header) -->
     <div class="content-header">
@@ -38,9 +39,9 @@
               <div class="card-body">
                 <strong><i class="fas fa-book mr-1"></i> title</strong>
                 <p class="text-muted">
-                <!-- 아래와같은 출력형태는 EL(Express Language)표시라고 합니다. -->
+                <!-- 아래와 같은 출력형태는 EL(Express Language)표시라고 합니다 -->
                 <%-- ${boardVO.title} --%>
-                <!-- 위 자바의 EL출력은 보안에 취약하기 때문에 아래처럼 처리 -->
+                <!-- 위 자바의 EL출력은 보안에 취약하기 때문에 아래처럼 처리함. -->
                 <c:out value="${boardVO.title}"></c:out>
                 </p>
 
@@ -55,19 +56,38 @@
                 <p class="text-muted">
                 <c:out value="${boardVO.writer}"></c:out>
                 </p>
-                
-                <hr>
-                <strong><i class="far fa-save mr-1"></i> 첨부파일</strong>
-                <p class="text-muted"><a href="#">파일다운로드</a></p>
-                
+                <c:forEach var="index" begin="0" end="1">
+                <c:if test="${boardVO.real_file_names[index] != null}">
+                	<hr>
+	                <strong><i class="far fa-save mr-1"></i> 첨부파일${index}</strong>
+	                <p class="text-muted">
+	                <a href="/download?save_file_name=${boardVO.save_file_names[index]}&real_file_name=${boardVO.real_file_names[index]}">
+	                ${boardVO.real_file_names[index]}-파일다운로드${index}
+	                </a>
+	                <c:set var="fileNameArray" value="${fn:split(boardVO.save_file_names[index],'.') }" />
+	                <c:set var="extName" value="${fileNameArray[fn:length(fileNameArray)-1]}" />
+	                <!-- length결과는 2 -1 = 배열의 인덱스1 -->
+	                <!--  미리보기 첨부파일이 이미지인지 아닌지 비교해서img태그를 사용할지 결정(아래) -->
+	                <c:choose>
+		                <c:when test="${fn:containsIgnoreCase(checkImgArray,extName)}">
+		                <img style="width:100%;" src="/download?save_file_name=${boardVO.save_file_names[index]}&real_file_name=${boardVO.real_file_names[index]}">
+		                </c:when>
+		                <c:otherwise>
+		                	<!-- 사용자홈페이지 메인 최근게시물 미리보기 이미지가 없을때 사용예정.-->
+		                </c:otherwise>
+	                </c:choose>
+	                </p>
+                </c:if>
+                </c:forEach>
               </div>
               <!-- /.card-body -->
             </div>
+          
           <!-- 버튼영역 시작 -->
           <div class="card-body">
-            	<a href="/admin/board/board_list" class="btn btn-primary float-right mr-1">LIST ALL</a>
-              	<button class="btn btn-danger float-right mr-1">DELETE</button>
-				<a href="/admin/board/board_write? update?bno=${boardVO.bno}" class="btn btn-warning float-right mr-1 text-white">UPDATE</a>            	
+            	<a href="/admin/board/board_list?page=${pageVO.page}" class="btn btn-primary float-right mr-1">LIST ALL</a>
+              	<button class="btn btn-danger float-right mr-1" id="btn_board_delete">DELETE</button>
+				<a href="/admin/board/board_update?page=${pageVO.page}&bno=${boardVO.bno}" class="btn btn-warning float-right mr-1 text-white">UPDATE</a>              	
               	<!-- 부트스트랩 디자인 버튼클래스를 이용해서 a태그를 버튼모양 만들기(위) -->
               	<!-- btn클래스명이 버튼모양으로 변경, btn-primary클래스명은 버튼색상을 변경하는역할 -->
               	<!-- 
@@ -87,7 +107,7 @@
 	          <form action="board_view.html" name="reply_form" method="post">
 	          <div class="card-body">
 	          	<div class="form-group">
-                     <label for="replyer">Replyer</label>
+                   <label for="replyer">Replyer</label>
                    <input type="text" class="form-control" name="replyer" id="replyer" placeholder="작성자를 입력해 주세요." required>
                    <!-- 폼에서 input같은 입력태그에는 name속성이 반드시 필요, 이유는 DB에 입력할때,
                    	 값을 전송하게 되는데, 전송값을 담아두는 이름이 name가 되고, 위에서는 writer 입니다. -->
@@ -103,7 +123,7 @@
 	          <div class="timeline">
 	          	  <!-- .time-label의 before 위치 -->
 		          <div class="time-label">
-	                <span class="bg-red">Reply List[1]&nbsp;&nbsp;</span>
+	                <span class="bg-red" id="btn_reply_list" style="cursor:pointer;">Reply List[1]&nbsp;&nbsp;</span>
 	              </div>
 	              <!-- .time-label의 after 위치 -->
 		          <!-- <div>
@@ -150,10 +170,10 @@
     <!-- /.content -->
   </div>
   <!-- /.content-wrapper -->
-  
-  <%@ include file="../include/footer.jsp" %>
 
-<%--> 자바스트립트용 #template 엘리먼트 제작(아래) jstl 향상된 for문과 같은 역할 
+<%@ include file="../include/footer.jsp" %>
+
+<%-- 자바스트립트용 #template 엘리먼트 제작(아래) jstl 향상된 for문과 같은 역할 
 jstl을 사용하려면, jsp에서 <%@ taglib uri=... 처럼 외부 core를 가져와서 사용한 것처럼
 자바스크립트에서도 외부 core를 가져와야 합니다.(아래)
 --%>
@@ -166,7 +186,7 @@ jstl을 사용하려면, jsp에서 <%@ taglib uri=... 처럼 외부 core를 가�
  <i class="fas fa-envelope bg-blue"></i>
  <div class="timeline-item">
    <h3 class="timeline-header">{{replyer}}</h3>
-   <div class="timeline-body">{{replytext}}</div>
+   <div class="timeline-body">{{reply_text}}</div>
    <div class="timeline-footer">
 	 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#replyModal">
   		수정
@@ -176,7 +196,6 @@ jstl을 사용하려면, jsp에서 <%@ taglib uri=... 처럼 외부 core를 가�
 </div>
 {{/each}}
 </script>
-
 <!-- 화면을 재구현Representation하는 함수(아래) -->
 <script>
 var printReplyList = function(data, target, templateObject) {
@@ -186,6 +205,30 @@ var printReplyList = function(data, target, templateObject) {
 	target.after(html);//target은 .time-label 클래스영역을 가리킵니다.
 };
 </script>
+<!-- 댓글 리스트 버튼 클릭시 Ajax로 RestAPI컨트롤러 호출(아래)해서 댓글목록 Json데이터로 -->
+<script>
+$(document).ready(function(){
+	$("#btn_reply_list").on("click", function(){
+		//alert('디버그');//$.getJSON 으로 대체해도 됨.
+		$.ajax({
+			type:"get",
+			url:"/reply/reply_list/129",//116게시물번호에 대한 댓글목록을 가져오는 URL
+			dataType:"json",
+			success:function(result) {//result에는 댓글 목록을 json데이터로 받음.
+				//빵틀에 result데이터를 바인딩해서 출력합니다.
+				//console.log(result);
+				//var jsonData = JSON.parse(result);//dataType:'text' 일때 실행 텍스트자료를 제이슨 자료로 변환.
+				//console.log("여기까지" + jsonData.replyList);//디버그용 
+				printReplyList(result.replyList, $(".time-label"), $("#template"));//화면에 출력하는 구현함수를 호출하면 실행.
+			},
+			error:function(result) {
+				alert("RestApi서버에 문제가 발생했습니다. 다음에 이용해 주세요!");
+			}
+		});
+	});
+});
+</script>
+
 <!-- 댓글 등록 버튼 액션 처리(아래) -->
 <script>
 $(document).ready(function() {
@@ -198,12 +241,12 @@ $(document).ready(function() {
 			url:'/reply/reply_write',//jsp로 가면, ReplyController 에서 지정한 url로 바꿔야 합니다.
 			dataType:'text',//ReplyController에서 받은 데이터의 형식은 text형식으로 받겠다고 명시.
 			success:function(result) {//응답이 성공하면(상태값200)위경로에서 반환받은 result(json데이터)를 이용해서 화면을 재구현
-				alert(result);
+				alert(result);//디버그용
 				//지금은 html이라서 result값을 이용할 수가 없어서 댓글 더미데이터를 만듭니다.(아래)
 				result = [
 					//{rno:댓글번호,bno:게시물번호,replytext:"첫번째 댓글",replyer:"admin",regdate:타임스탬프}
-					{rno:1,bno:15,replytext:"첫번째 댓글",replyer:"admin",regdate:1601234512345},//첫번째 댓글 데이터
-					{rno:2,bnt:15,replytext:"두번째 댓글",replyer:"admin",regdate:1601234512345}//두번째 댓글 데이터
+					{rno:1,bno:15,reply_text:"첫번째 댓글",replyer:"admin",reg_date:1601234512345},//첫번째 댓글 데이터
+					{rno:2,bno:15,reply_text:"두번째 댓글",replyer:"admin",reg_date:1601234512345}//두번째 댓글 데이터
 				];//위 URL이 공공데이터생각하면,위 데이터를 화면에 구현하면, 빅데이터의 시각화로 불리게 됩니다.
 				//printReplyList(빅데이터, 출력할 타켓위치, 빅데이터를 가지고 바인딩된-묶인 템플릿화면);
 				printReplyList(result, $(".time-label"), $("#template"));//화면에 출력하는 구현함수를 호출하면 실행.
@@ -220,7 +263,7 @@ $(document).ready(function() {
 		$("#rno").val($(this).attr("data-rno"));
 		$(".modal-title").html($(this).find(".timeline-header").text());
 		$("#replytext").val($(this).find(".timeline-body").text());
-		
+		//alert("디버그" + $(this).find(".timeline-body").text());
 		//마우스클릭으로 선택한 댓글의 .timeline-body영역의 text문자를 
 		//모달창의 #replaytext영역에 값으로 입력하겠다.
 	});
@@ -243,9 +286,25 @@ $(document).ready(function() {
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
         <button type="button" class="btn btn-primary" id="updateReplyBtn">수정</button>
-        <button type="button" class="btn btn-danger"id="deleteReplyBtn">삭제</button>
+        <button type="button" class="btn btn-danger" id="deleteReplyBtn">삭제</button>
       </div>
     </div>
   </div>
 </div>
-
+<!-- 게시물 삭제 버튼 클릭시 액션(아래) -->
+<form name="action_form">
+	<input type="hidden" name="bno" value="${boardVO.bno}">
+	<input type="hidden" name="page" value="${pageVO.page}">
+</form>
+<script>
+$(document).ready(function(){
+	$("#btn_board_delete").on("click",function(){
+		//alert("디버그");
+		if(confirm("정말로 삭제 하시겠습니까?")) {
+			$('form[name="action_form"]').attr("method","post");
+			$('form[name="action_form"]').attr("action","/admin/board/board_delete");
+			$('form[name="action_form"]').submit();
+		}
+	});
+});
+</script>

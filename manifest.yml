@@ -1,8 +1,8 @@
 ---
 applications:
-- name: parkjeongsu
+- name: kimilguk
   memory: 1024M
   disk_quota: 1024M
   instances: 1
-  host: parkjeongsu
+  host: kimilguk
   domain: paas-ta.org

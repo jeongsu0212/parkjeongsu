@@ -119,7 +119,7 @@
             	<ul class="pagination">
             	 <c:if test="${pageVO.prev}">
 	            	 <li class="paginate_button page-item previous" id="example2_previous">
-	            	 <a href="/admin/member/member_list?page=${pageVO.startPage-1}&search_type=${pageVO.search_type}&search_keyword=${pageVO.search_keyword}" aria-controls="example2" data-dt-idx="7" tabindex="0" class="page-link">Previous</a>
+	            	 <a href="/admin/member/member_list?page=${pageVO.startPage-1}&search_type=${pageVO.search_type}&search_keyword=${pageVO.search_keyword}" aria-controls="example2" data-dt-idx="0" tabindex="0" class="page-link">Previous</a>
 	            	 </li>
 	            	 <!-- 위 이전게시물링크 -->
             	 </c:if>

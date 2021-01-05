@@ -1,5 +1,6 @@
 package org.edu.controller;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -8,11 +9,15 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.edu.dao.IF_BoardDAO;
+import org.edu.service.IF_BoardService;
 import org.edu.service.IF_MemberService;
+import org.edu.util.CommonController;
 import org.edu.util.SecurityCode;
 import org.edu.vo.BoardVO;
 import org.edu.vo.MemberVO;
 import org.edu.vo.PageVO;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -28,70 +33,215 @@ public class AdminController {
 	//@Inject == @Autowired 의존성 주입방식 DI(Dependency Inject)으로 
 	//외부 라이브러리 = 컴포넌트 = 모듈  = 실행클래스 = 인스턴스 갖다쓰기(아래)
 	@Inject
+	CommonController commonController;
+	
+	@Inject
 	SecurityCode securityCode;
 	
 	@Inject
+	IF_BoardService boardService;//게시판인터페이스를 주입받아서 boardService오브젝트 생성.
+	
+	@Inject
+	IF_BoardDAO boardDAO;//jsp-Controller=Service-DAO-Mapper-DB
+	
+	@Inject
 	IF_MemberService memberService;//멤버인터페이스를 주입받아서 memberService오브젝트 변수를 생성.
+	
+	//GET은 URL전송방식(아무데서나 브라우저주소에 적으면 실행됨), POST는 폼전송방식(해당페이지에서만 작동가능)
+	@RequestMapping(value="/admin/board/board_delete",method=RequestMethod.POST)
+	public String board_delete(RedirectAttributes rdat,PageVO pageVO, @RequestParam("bno") Integer bno) throws Exception {
+		//기존등록된 첨부파일 폴더에서 삭제할 UUID파일명 구하기(아래)
+		List<HashMap<String,Object>> delFiles = boardService.readAttach(bno);
+		boardService.deleteBoard(bno);
+		//첨부파일 삭제:DB부터 먼저 삭제 후 폴더에서 첨부파일을 삭제
+		for(HashMap<String,Object> file_name:delFiles) {
+			//실제파일 삭제 로직(아래) File클래스(폴더경로,파일명)
+			File target = new File(commonController.getUploadPath(), (String) file_name.get("save_file_name"));
+			if(target.exists()) {
+				target.delete();//실제 지워짐.
+			}
+		}
+		rdat.addFlashAttribute("msg", "삭제");
+		return "redirect:/admin/board/board_list?page=" + pageVO.getPage();//삭제할 당시의 현재페이지를 가져가서 리스트로보줌
+	}
+	
+	@RequestMapping(value="/admin/board/board_update",method=RequestMethod.GET)
+	public String board_update(@RequestParam("bno") Integer bno,@ModelAttribute("pageVO") PageVO pageVO,Model model) throws Exception {
+		BoardVO boardVO = boardService.readBoard(bno);
+		
+		List<HashMap<String, Object>> files = boardService.readAttach(bno);
+		String[] save_file_names = new String[files.size()];
+		String[] real_file_names = new String[files.size()];
+		int cnt = 0;
+		for(HashMap<String, Object> file_name:files) {//세로데이터를 가로데이터로 변경하는 로직
+			save_file_names[cnt] = (String) file_name.get("save_file_name");//형변환 cast
+			real_file_names[cnt] = (String) file_name.get("real_file_name");
+			cnt = cnt + 1;
+		}
+		//배열형출력값(가로) {'save_file_name0','save_file_name1',...}
+		boardVO.setSave_file_names(save_file_names);
+		boardVO.setReal_file_names(real_file_names);
+		//시큐어코딩 적용(아래)
+		String xss_data = boardVO.getContent();
+		boardVO.setContent(securityCode.unscript(xss_data));
+		//시큐어코딩 끝
+		model.addAttribute("boardVO", boardVO);
+		return "admin/board/board_update";//파일경로
+	}
+	@RequestMapping(value="/admin/board/board_update",method=RequestMethod.POST)
+	public String board_update(RedirectAttributes rdat,@RequestParam("file") MultipartFile[] files, BoardVO boardVO, PageVO pageVO) throws Exception {
+		//기존 등록된 첨부파일 목록 구하기
+		List<HashMap<String,Object>> delFiles = boardService.readAttach(boardVO.getBno());
+		//jsp에 보낼 save_file_names, real_file_names 배열변수 초기값 지정
+		String[] save_file_names = new String[files.length];
+		String[] real_file_names = new String[files.length];
+		int index = 0;//아래 향상된 for문에서 사용할 인덱스값
+		//첨부파일 수정: 기존첨부파일 삭제 후 신규파일 업로드
+		for(MultipartFile file:files) {//다중파일 업로드 호출 부분 시작 향상된for문 사용
+			if(file.getOriginalFilename() != "") {//첨부파일명이 있으면
+				//기존파일 DB에서 삭제처리할 변수 생성한 이유: 업데이트jsp에서 첨부파일 개별삭제시 순서가 필요하기때문
+				int cnt = 0;
+				for(HashMap<String,Object> file_name:delFiles) {
+					save_file_names[cnt] = (String) file_name.get("save_file_name");
+					real_file_names[cnt] = (String) file_name.get("real_file_name");
+					cnt = cnt + 1;//반복시 증가값
+				}
+				int sun = 0;//업데이트jsp화면에서 첨부파일을 개별 삭제시 사용할 순서가 필요하기때문 변수 추가
+				//기존파일 폴더에서 삭제처리
+				for(HashMap<String,Object> file_name:delFiles) {
+					if(index == sun) {//index는 첨부파일개수 , sun삭제할 개별순서
+						File target = new File(commonController.getUploadPath(), (String) file_name.get("save_file_name"));
+						if(target.exists()) {
+							target.delete();//폴더에서 기존첨부파일 지우기
+						}
+					}	
+					//서비스클래스에는 첨부파일DB를 지우는 메서드가 없음. DAO를 접근해서 tbl_attach를 지움.
+					boardDAO.deleteAttach((String) file_name.get("save_file_name"));//DB삭제
+					sun = sun +1;//개별삭제는 for문에서 딱 1번 뿐이기 때문에
+				}
+				//신규파일 폴더에업로드 처리
+				save_file_names[index] = commonController.fileUpload(file);//폴더에 업로드저장완료
+				real_file_names[index] = file.getOriginalFilename();//"한글파일명.jpg"
+			}
+			index = index + 1;
+		}
+		boardVO.setSave_file_names(save_file_names);//UUID로 생성된 유니크한 파일명
+		boardVO.setReal_file_names(real_file_names);
+		boardService.updateBoard(boardVO);//DB에서 업데이트
+		rdat.addFlashAttribute("msg", "수정");
+		return "redirect:/admin/board/board_view?page="+pageVO.getPage()+"&bno="+boardVO.getBno();
+	}
 	
 	@RequestMapping(value="/admin/board/board_write",method=RequestMethod.GET)//URL경로
 	public String board_write() throws Exception {
 		return "admin/board/board_write";//파일경로
 	}
 	@RequestMapping(value="/admin/board/board_write",method=RequestMethod.POST)
-	public String board_write(MultipartFile file, BoardVO boardVO) throws Exception {
+	public String board_write(RedirectAttributes rdat,@RequestParam("file") MultipartFile[] files, BoardVO boardVO) throws Exception {
 		//post받은 boardVO내용을 DB서비스에 입력하면 됩니다.
 		//dB에 입력후 새로고침명령으로 게시물 테러를 당하지 않으려면, redirect로 이동처리 합니다.(아래)
+		String[] save_file_names = new String[files.length];//배열크기가 존재하는 변수 생성
+		String[] real_file_names = new String[files.length];
+		int index = 0;
+		//첨부파일이 있으면, 첨부파일 업로드처리 후 게시판DB저장+첨부파일DB저장
+		for(MultipartFile file:files) {
+			if(file.getOriginalFilename() != "") {//첨부파일명이 있으면
+				save_file_names[index] = commonController.fileUpload(file);//폴더에 업로드저장완료
+				real_file_names[index] = file.getOriginalFilename();//"한글파일명.jpg"
+			}
+			index = index + 1;//배열 인덱스 변수값 증가처리
+		}
+		boardVO.setSave_file_names(save_file_names);//UUID로 생성된 유니크한 파일명
+		boardVO.setReal_file_names(real_file_names);
+		boardService.insertBoard(boardVO);
+		
+		rdat.addFlashAttribute("msg", "저장");
 		return "redirect:/admin/board/board_list";
 	}
 	@RequestMapping(value="/admin/board/board_view", method=RequestMethod.GET)
-	public String board_view(@RequestParam("bno") Integer bno, Model model) throws Exception {
+	public String board_view(@ModelAttribute("pageVO") PageVO pageVO, @RequestParam("bno") Integer bno, Model model) throws Exception {
 		//jsp로 보낼 더미 데이터 boardVO에 담아서 보낸다.
 		//실제로는 아래처럼 더미데이터를 만드것이 아닌
 		//쿼리스트링(질의문자열)로 받아온 bno(게시물 고유번호)를 이용해서 DB에서
 		//select * from tbl_boarad where bno = ? 마이바티스 실행이 된 결과값이 BoardVO형으로 받아서 jsp보내줌.
 		//'3', '새로운 글을 넣습니다. ', '새로운 글을 넣습니다. ', 'user00', '2019-10-10 12:25:36', '2019-10-10 12:25:36', '0', '0'
-		BoardVO boardVO = new BoardVO();
-		boardVO.setBno(1);
-		boardVO.setTitle("첫번째 게시물 입니다.");
-		String xss_data = "첫번째 내용 입니다.<br><br><br>줄바꿈 처리입니다. <script>location.href('http://naver.com');</script>";
+		/*
+		 * BoardVO boardVO = new BoardVO(); boardVO.setBno(1);
+		 * boardVO.setTitle("첫번째 게시물 입니다."); String xss_data =
+		 * "첫번째 내용 입니다.<br><br><br>줄바꿈 처리입니다. <script>location.href('http://naver.com');</script>"
+		 * ; boardVO.setContent(securityCode.unscript(xss_data));
+		 * boardVO.setWriter("admin"); Date reg_date = new Date();
+		 * boardVO.setReg_date(reg_date); boardVO.setView_count(2);
+		 * boardVO.setReply_count(0);
+		 */
+		BoardVO boardVO = boardService.readBoard(bno);
+		//시큐어코딩 시작
+		String xss_data = boardVO.getContent();
 		boardVO.setContent(securityCode.unscript(xss_data));
-		boardVO.setWriter("admin");
-		Date reg_date = new Date();
-		boardVO.setReg_date(reg_date);
-		boardVO.setView_count(2);
-		boardVO.setReply_count(0);
+		//시큐어코딩 끝
+		//첨부파일 리스트 값을 가져와서 세로데이터(jsp에서는 forEach문사용)를 가로데이터(jsp에서 배열사용)로 바꾸기
+		//첨부파일을 1개만 올리기 때문에 리스트형 데이터를 배열데이터로 변경
+		// 리스트형 입력값(세로) [
+		// {'save_file_name0'},
+		// {'save_file_name1'},
+		// ..
+		//]
+		List<HashMap<String, Object>> files = boardService.readAttach(bno);
+		String[] save_file_names = new String[files.size()];
+		String[] real_file_names = new String[files.size()];
+		int cnt = 0;
+		for(HashMap<String, Object> file_name:files) {//세로데이터를 가로데이터로 변경하는 로직
+			save_file_names[cnt] = (String) file_name.get("save_file_name");//형변환 cast
+			real_file_names[cnt] = (String) file_name.get("real_file_name");
+			cnt = cnt + 1;
+		}
+		//배열형출력값(가로) {'save_file_name0','save_file_name1',...}
+		boardVO.setSave_file_names(save_file_names);
+		boardVO.setReal_file_names(real_file_names);
+		//위처럼 첨부파일을 세로베치->가로배치로 바꾸고, get/set하는 이유는 attachVO를 만들지 않아서 입니다.
+		//만약 위처럼 복잡하게 세로배치->가로배치로 바꾸는 것이 이상하면, 아래처럼처리
+		//model.addAttribute("save_file_names", files);
 		model.addAttribute("boardVO", boardVO);
+		model.addAttribute("checkImgArray", commonController.getCheckImgArray());
 		return "admin/board/board_view";
 	}
 	@RequestMapping(value="/admin/board/board_list",method=RequestMethod.GET)
-	public String board_list(Model model) throws Exception {
+	public String board_list(@ModelAttribute("pageVO") PageVO pageVO, Model model) throws Exception {
 		//테스트용 더미 게시판 데이터 만들기(아래)
-		BoardVO input_board = new BoardVO();
-		input_board.setBno(1);
-		input_board.setTitle("첫번째 게시물 입니다.");
-		input_board.setContent("첫번째 내용 입니다.<br>줄바꿈했습니다.");
-		input_board.setWriter("admin");
-		Date reg_date = new Date();
-		input_board.setReg_date(reg_date);
-		input_board.setView_count(2);
-		input_board.setReply_count(0);
-		BoardVO[] board_array = new BoardVO[2];
-		//input_board = {1,"첫번째 게시물 입니다.","첫번째 내용 입니다.<br>줄바꿈했습니다.","admin",now(),2,0};
-		board_array[0] = input_board;
-		//------------------------------------
-		BoardVO input_board2 = new BoardVO();
-		input_board2.setBno(2);
-		input_board2.setTitle("두번째 게시물 입니다.");
-		input_board2.setContent("두번째 내용 입니다.<br>줄바꿈했습니다.");
-		input_board2.setWriter("user02");
-		input_board2.setReg_date(reg_date);
-		input_board2.setView_count(2);
-		input_board2.setReply_count(0);
-		//input_board2 = {2,"두번째 게시물 입니다.","두번째 내용 입니다.<br>줄바꿈했습니다.","user02",now(),2,0};
-		board_array[1] = input_board2;
-		//-------------------------------------
-		List<BoardVO> board_list = Arrays.asList(board_array);//배열타입을 List타입으로 변경절차.
+		/*
+		 * BoardVO input_board = new BoardVO(); input_board.setBno(1);
+		 * input_board.setTitle("첫번째 게시물 입니다.");
+		 * input_board.setContent("첫번째 내용 입니다.<br>줄바꿈했습니다.");
+		 * input_board.setWriter("admin"); Date reg_date = new Date();
+		 * input_board.setReg_date(reg_date); input_board.setView_count(2);
+		 * input_board.setReply_count(0); BoardVO[] board_array = new BoardVO[2];
+		 * //input_board =
+		 * {1,"첫번째 게시물 입니다.","첫번째 내용 입니다.<br>줄바꿈했습니다.","admin",now(),2,0};
+		 * board_array[0] = input_board; //------------------------------------ BoardVO
+		 * input_board2 = new BoardVO(); input_board2.setBno(2);
+		 * input_board2.setTitle("두번째 게시물 입니다.");
+		 * input_board2.setContent("두번째 내용 입니다.<br>줄바꿈했습니다.");
+		 * input_board2.setWriter("user02"); input_board2.setReg_date(reg_date);
+		 * input_board2.setView_count(2); input_board2.setReply_count(0); //input_board2
+		 * = {2,"두번째 게시물 입니다.","두번째 내용 입니다.<br>줄바꿈했습니다.","user02",now(),2,0};
+		 * board_array[1] = input_board2; //-------------------------------------
+		 * List<BoardVO> board_list = Arrays.asList(board_array);//배열타입을 List타입으로 변경절차.
+		 */
+		// selectBoard마이바티스쿼리를 실행하기전에 set이 발생해야 변수값이 할당됩니다.(아래)
+		// PageVO의 queryStartNo구하는 계산식 먼저 실행되어서 변수값이 발생되어야 합니다.
+		if(pageVO.getPage() == null) {//int 일때 null체크에러가 나와서 pageVO의 page변수형 Integer로벼경.
+			pageVO.setPage(1);
+		}
+		pageVO.setPerPageNum(8);//리스트하단에 보이는 페이징번호의 개수
+		pageVO.setQueryPerPageNum(10);//쿼리에서 1페이지당 보여줄 게시물수 10개로 입력 놓았습니다.
+		//검색된 전체 게시물수 구하기 서비스 호출
+		int countBoard = 0;
+		countBoard = boardService.countBoard(pageVO);
+		pageVO.setTotalCount(countBoard);//11x개 전체 게시물 수를 구한 변수 값 매개변수로 입력하는 순간 calcPage()메서드실행.
+		
+		List<BoardVO> board_list = boardService.selectBoard(pageVO);
 		model.addAttribute("board_list", board_list);
+		//model.addAttribute("pageVO", pageVO);//@ModelAttribute 애노테이션으로 대체
 		return "admin/board/board_list";
 	}
 	

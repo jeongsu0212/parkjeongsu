@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<!-- 관리자단 푸터 시작 footer.jsp-->
+<!-- 관리자단 푸터 시작 footer.jsp -->
   <footer class="main-footer">
     <strong>Copyright &copy; 2014-2020 <a href="https://adminlte.io">AdminLTE.io</a>.</strong>
     All rights reserved.
@@ -9,6 +9,7 @@
     </div>
   </footer>
   
+
   <!-- 로그아웃 영역 Control Sidebar -->
   <aside class="control-sidebar control-sidebar-dark">
     <!-- Control sidebar content goes here -->
@@ -62,7 +63,8 @@ $(document).ready(function() {
 	//admin/board_list(게시물관리)
 	//active클래스명을 동적으로 추가할 영역은 nav-item 안쪽의 a 태그의 클래스명을 추가하면 됨.
 	$(".nav-treeview li a").each(function() {
-		if( $(this).attr('href').indexOf(current_2) != -1 )	{//위 문제를 처리하는 대체 함수 indexOf사용
+		if( $(this).attr('href').indexOf(current_2) != -1 )	{
+			//위 문제를 처리하는 대체 함수 indexOf사용
 			$(this).addClass("active");//선택한 메뉴의 배경색상을 흰색으로 보이게 추가하는 처리.
 		} else {
 			$(this).removeClass("active");//선택하지 않은 메뉴의 배경색상 흰색을 제거하는 처리.
