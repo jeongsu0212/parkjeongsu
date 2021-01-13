@@ -13,6 +13,10 @@
   <!-- 로그아웃 영역 Control Sidebar -->
   <aside class="control-sidebar control-sidebar-dark">
     <!-- Control sidebar content goes here -->
+    <div class="p-3 control-sidebar-content text-center">
+    	<h5>로그 아웃</h5><hr class="mb-2"/>
+    	<a href="/logout" class="btn btn-lg btn-primary">로그아웃</a>
+    </div>
   </aside>
   <!-- /.control-sidebar -->
 </div>
