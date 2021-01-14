@@ -216,7 +216,7 @@ $(document).ready(function(){
 	$("#updateReplyBtn").on("click",function(){
 		if("${session_enabled}" == "") {
 			alert("회원만 댓글 수정이 가능합니다.");
-			location.href("/login");
+			location.href = "/login";
 			return false;
 		}
 		var reply_text = $("#replytext").val();//GET
@@ -255,7 +255,7 @@ $(document).ready(function(){
 	$("#deleteReplyBtn").on("click",function(){
 		if("${session_enabled}" == "") {
 			alert("회원만 댓글 삭제이 가능합니다.");
-			location.href("/login");
+			location.href ="/login";
 			return false;
 		}
 		var rno = $("#rno").val();
@@ -287,7 +287,7 @@ $(document).ready(function() {
 	$("#insertReplyBtn").on("click", function() {//댓글등록버튼을 클릭했을 때 구현내용(아래)
 		if("${session_enabled}" == "") {//버튼클릭시 비로그인시 로그인 화면으로 유도
 			alert("회원만 댓글 등록이 가능합니다.");
-			location.href("/login");//자바스크립트 내장함수(href:hyterTextReference:URL이동함수)
+			location.href ="/login";//자바스크립트 내장기능(href:hyterTextReference:URL이동)
 			return false;
 		}
 		//alert("디버그");
