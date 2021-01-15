@@ -65,7 +65,11 @@
 				</li>
 			</ul>
 			<p class="btn_line txt_right">
-				<a href="/home/board/board_list" class="btn_bbs">목록</a>
+				<a href="/home/board/board_list?page=${pageVO.page}" class="btn_bbs">목록</a>
+				<a href="/home/board/board_update?bno=${boardVO.bno}&page=${pageVO.page}" class="btn_bbs">
+				수정
+				</a> 
+				<button class="btn_baseColor btn_smallColor">삭제</button>
 			</p>
 			
 		</div>
@@ -153,25 +157,24 @@ var printReplyList = function(data, target, templateObject) {
 <script>
 var printPageVO = function(pageVO, target) {
 	 var paging = "";
-	 if(pageVO.prev) {
-		 paging = paging +'<li class="paginate_button page-item previous disabled" id="example2_previous"><a href="'+(pageVO.startPage-1)+'" aria-controls="example2" data-dt-idx="0" tabindex="0" class="page-link">Previous</a></li>';
+	 if(pageVO.prev){
+		 paging = paging + '<li class="paginate_button page-item previous disabled" id="example2_previous"><a href="'+(pageVO.startPage-1)+'" aria-controls="example2" data-dt-idx="0" tabindex="0" class="page-link">Previous</a></li>';
 	 }
 	 for(cnt=pageVO.startPage;cnt<=pageVO.endPage;cnt++){ var active = (cnt==pageVO.page)?"active":"";
 		 paging = paging + '<li class="paginate_button page-item '+active+'"><a href="'+cnt+'" aria-controls="example2" data-dt-idx="1" tabindex="0" class="page-link">'+cnt+'</a></li>';
 	 }
-	 if(pageVO.prev) {
-	 	 paging = paging + '<li class="paginate_button page-item next" id="example2_next"> <a href="'+(pageVO.endPage+1)+'" aria-controls="example2" data-dt-idx="7" tabindex="0" class="page-link">Next</a></li>';
+	 if(pageVO.next){
+		 paging = paging + '<li class="paginate_button page-item next" id="example2_next"><a href="'+(pageVO.endPage+1)+'" aria-controls="example2" data-dt-idx="7" tabindex="0" class="page-link">Next</a></li>';
 	 }
 	 target.html(paging);
 }
 </script>
-
 <!-- 댓글 리스트 실행 하는 함수(아래) -->
 <script>
 var replyList = function(){
-	var page = $("#reply_page").val();//현재 지정된 댓글 페이지 값 가져오기
+	var page = $("#reply_page").val();//현재 지정된 댓글 페이지 값 가져오기Get
 	$.ajax({
-		url:"/reply/reply_list/${boardVO.bno}/" + page,//쿼리스트링X, 패스베리어블로 보냅니다.
+		url:"/reply/reply_list/${boardVO.bno}/"+page,//쿼리스트링X, 패스베리어블로 보냅니다.
 		type:"post",//원래는 get인데, post로 보낼수 있음.
 		dataType:"json",
 		success:function(result){
@@ -193,11 +196,11 @@ var replyList = function(){
 <script>
 $(document).ready(function(){
 	$(".pageVO").on("click","li a",function(event){
-		event.preventDefault();//디폴트 액션 링크이동방지
-		var page = $(this).attr("href")//GET
-		$("#reply_page").val(page);//SET 매게변수가 없으면 GET
+		event.preventDefault();//디폴트 액션 링크이동 방지
+		var page = $(this).attr("href");//겟GET
+		$("#reply_page").val(page);//셋SET 매개변수가 없으면 겟 GET $("#reply_page").val()
 		//alert("디버그" + page);
-		replyList();//댓글 리스트 함수 호출
+		replyList();
 	});
 });
 </script>
@@ -219,8 +222,8 @@ $(document).ready(function(){
 			location.href = "/login";
 			return false;
 		}
-		var reply_text = $("#replytext").val();//GET
-		var rno = $("#rno").val();//GET
+		var reply_text = $("#replytext").val();//겟Get
+		var rno = $("#rno").val();//겟Get
 		$.ajax({
 			type:"patch",
 			url:"/reply/reply_update",
@@ -235,9 +238,9 @@ $(document).ready(function(){
 			dataType:"text",
 			success:function(result){
 				if(result=="success"){
-				alert("댓글 수정이 성공!");
-				$("#replyModal").modal("hide");
-				replyList();//수정후 댓글리스트 재호출(실행)
+					alert("댓글 수정 성공!");
+					$("#replyModal").modal("hide");
+					replyList();//수정 후 댓글리스트 재 호출(실행)
 				}else{
 					alert("댓글 수정 실패!");
 				}
@@ -254,8 +257,8 @@ $(document).ready(function(){
 $(document).ready(function(){
 	$("#deleteReplyBtn").on("click",function(){
 		if("${session_enabled}" == "") {
-			alert("회원만 댓글 삭제이 가능합니다.");
-			location.href ="/login";
+			alert("회원만 댓글 삭제가 가능합니다.");
+			location.href = "/login";
 			return false;
 		}
 		var rno = $("#rno").val();
@@ -269,12 +272,12 @@ $(document).ready(function(){
 					var reply_count = $("#reply_count").text();//겟Get
 					$("#reply_count").text(parseInt(reply_count)-1);//셋Set
 					replyList();//삭제후 댓글 리스트 재실행.
-					$("#replyModal").modal("hide");//모달창을 닫는 JQuery
+					$("#replyModal").modal("hide");//모달창을 닫는 JQuery내장함수
 				}else{
 					alert("댓글삭제 실패!");
 				}
 			},
-			error:function(result) {
+			error:function(result){
 				alert("RestAPI서버가 작동하지 않습니다.");
 			}
 		});
@@ -287,7 +290,7 @@ $(document).ready(function() {
 	$("#insertReplyBtn").on("click", function() {//댓글등록버튼을 클릭했을 때 구현내용(아래)
 		if("${session_enabled}" == "") {//버튼클릭시 비로그인시 로그인 화면으로 유도
 			alert("회원만 댓글 등록이 가능합니다.");
-			location.href ="/login";//자바스크립트 내장기능(href:hyterTextReference:URL이동)
+			location.href = "/login";//자바스크립트 내장기능(href:hyterTextReference:URL이동)
 			return false;
 		}
 		//alert("디버그");
@@ -299,7 +302,9 @@ $(document).ready(function() {
 			alert("댓글 내용, 작성자는 필수 입력 사항 입니다.");
 			return false;
 		}
-		$.ajax({//통신프로그램
+		$.ajax({//통신프로그램: J쿼리에서 내장된 함수ajax({}); 비동기통신특징(HTTP동기통신-웹페이지의 단점을 해소 Ajax)
+		//최초로 상용화 적용되었던 곳이 파일 업로드/다운로드에 Ajax기능의 적용되었습니다.
+		//서버(RestAPI서버=컨트롤러)-클라이언트(PC브라우저ajax=jsp단-화면)
 			//여기서부터는 프론트 엔드 개발자 영역
 			type:'post',//지금은 html이라서 get방식이지만, jsp로가면, post방식으로 바꿔야 합니다.
 			url:'/reply/reply_write',//jsp로 가면, ReplyController 에서 지정한 url로 바꿔야 합니다.
@@ -315,11 +320,11 @@ $(document).ready(function() {
 			success:function(result) {//응답이 성공하면(상태값200)위경로에서 반환받은 result(json데이터)를 이용해서 화면을 재구현
 				var reply_count = $("#reply_count").text();//겟Get
 				$("#reply_count").text(parseInt(reply_count)+1);//셋Set
-				//댓글 3페이지를 보고있다가, 댓글입력했어, 본인이 작성할 댓글바로 확인 가능하로록 1page로 가도록 유도
-				$("#reply_page").val("1");//그래서 1페이지값으로 set
-				replyList();//댓글입력후 리스트 출력함수 호출(실행)
-				$("#replyer").val("");//input박스의 값 제거
-				$("#reply_text").val("");//input박스의 값 제거
+				//댓글 3페이지를 보고 있다가, 댓글 입력했어요, 본인 작성할 댓글 바로 확인 가능하도록 1page로 가도록 유도
+				$("#reply_page").val("1");//그래서 1페이지값으로 Set
+				replyList();//댓글입력 후 리스트 출력함수 호출(실행)
+				$("#replyer").val("");//input박스의 값 제거 
+				$("#reply_text").val("");
 			},
 			error:function(result) {
 				alert("RestAPI서버가 작동하지 않습니다.");
@@ -364,6 +369,3 @@ $(document).ready(function() {
     </div>
   </div>
 </div>
-	
-
-<%@ include file="../include/footer.jsp" %>

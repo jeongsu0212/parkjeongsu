@@ -82,7 +82,7 @@ $(document).ready(function() {
 		<!-- 페이징처리영역 -->
 		<div class="pagination">
 			<c:if test="${pageVO.prev}">
-				<a href="/home/board_list?page=${pageVO.startPage-1}&search_type=${pageVO.search_type}&search_keyword=${pageVO.search_keyword}" class="prevpage  pbtn"><img src="/resources/home/img/btn_prevpage.png" alt="이전 페이지로 이동"></a>
+				<a href="/home/board/board_list?page=${pageVO.startPage-1}&search_type=${pageVO.search_type}&search_keyword=${pageVO.search_keyword}" class="prevpage  pbtn"><img src="/resources/home/img/btn_prevpage.png" alt="이전 페이지로 이동"></a>
 			</c:if>
 			<c:forEach begin="${pageVO.startPage}" end="${pageVO.endPage}" var="idx">
 				<a href="/home/board/board_list?page=${idx}&search_type=${pageVO.search_type}&search_keyword=${pageVO.search_keyword}">
@@ -90,7 +90,7 @@ $(document).ready(function() {
 				</a>
 			</c:forEach>
 			<c:if test="${pageVO.next}">
-				<a href="/home/board_list?page=${pageVO.endPage+1}&search_type=${pageVO.search_type}&search_keyword=${pageVO.search_keyword}" class="nextpage  pbtn"><img src="/resources/home/img/btn_nextpage.png" alt="다음 페이지로 이동"></a>
+				<a href="/home/board/board_list?page=${pageVO.endPage+1}&search_type=${pageVO.search_type}&search_keyword=${pageVO.search_keyword}" class="nextpage  pbtn"><img src="/resources/home/img/btn_nextpage.png" alt="다음 페이지로 이동"></a>
 			</c:if>
 		</div>
 		<!-- //페이징처리영역 -->
