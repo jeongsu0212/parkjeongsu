@@ -1,3 +1,13 @@
+#### Hsql 데이터베이스 사용 개선
+- jdbc:hsqldb:file:c:/egov/workspace/embeded/hsql_file.db 이 내용이 사용된 부분에  ;hsqldb.lock_file=false를 추가하면, 사용시 lock이 걸리지 않고 톰캣과 Junit 동시 사용이 가능합니다.(아래 2가지 수정)
+- root-context.xml 과 
+- Junit 작업파일에서 oldQueryTest() 메서드 부분
+- 작업결과 아래와 같이 표현 됩니다.
+- jdbc:hsqldb:file:c:/egov/workspace/embeded/hsql_file.db;hsqldb.lock_file=false
+- 단, 기존에 만들었던 DB폴더에서 lock파일(hsql_file.lck)을 지우셔야 합니다.
+- 다음 실행 부터는 생성되지 않기 때문에 톰캣실행과 JUnit및 다른 프로그램 작업도 가능합니다.
+![ex_screenshot](./git_img/hsql_lock_delete.jpg)
+
 ### 기본정보
 - 스프링관리자 AdminLTE템플릿 샘플: 
 - https://adminlte.io/themes/v3/pages/forms/general.html
@@ -12,7 +22,7 @@
 
 #### 톰캣 서버 강제 종료시키기
 - netstat -ano | findstr 8080 : 특정 포트로 검색
-- taskkill /F /PID 위에서출력된 제일오른쪽번호 : PID를 통해 작동중인 프로그램 종료
+- taskkill /F /PID 포트번호(위에서출력된 제일오른쪽번호 : PID를 통해 작동중인 프로그램 종료)
 
 ### 스프링 작업순서
 - 스프링 HelloWorld MVC 프로젝트 org.edu.controller 제작OK.
@@ -38,31 +48,224 @@
 - 트랜잭션 @Tansactional추가: root-context.xml에서 dataSource에 트랜잭션 설정추가필수OK.
 - 파일업로드 라이브러리 사용 pom.xml 의존성 추가OK.
 - 관리자단 게시판 업로드 화면 구현OK.
-- --------------- 여기까지 ------------------
 - 댓글에서 Json데이터 사용 pom.xml 의존성 추가.(댓글 Rest-Api에서필요)
 - 보통 jackson, Gson 외부라이브러리를 사용할때는 pom.xml에 모듈을 추가해야 하지만,
 - Rest컨트롤러 클래스안에 ResponseEntity<String>를 사용해서 Json데이터로 반환합니다.
-- 그래서, pom.xml 모듈추가 없가없이 작업 진행 합니다.
-- -------------------------------------------------------------------
-- 실제 댓글 화면CRUD적용.(우리가 만들어서 제공 Rest-API백엔드단)
+- 그래서, pom.xml 모듈추가 없가없이 작업 진행 합니다.X(잘못된 정보)
+- jackson-databind 모듈추가했음.
+- 실제 댓글 화면CRUD적용.(우리가 만들어서 제공 Rest-API백엔드단)OK.
+- 사용자단 html(https://miniplugin.github.io/) 소스를 커스터마이징 후 jsp로 만들기OK.
+- 인터셉터(가로채기-Interceptor)클래스를 이용해서, 예외처리를 공통 spring_error.jsp 로 바인딩 처리OK.
+- 스프링시큐리티 로그인 구현 pom.xml 의존성 추가OK.
+- web.xml에 스프링시큐리티 설정 추가OK.
+- security-context.xml OK.
+- 스프링빈클래스작업: 로그인 구현 + 관리자 회원등록시 패스워드 암호화 추가 OK.
+---------------------- 작업중 ------------------------------
+- 사용자단 CRUD 구현(RestAPI 댓글포함).
+--------------------------------------------------------------------
+- 헤로쿠 클라우드로 배포(Hsql데이터베이스사용).
+- 이후 유효성검사(객체검증), 파스타클라우드, 네이버아이디 로그인(네이버에서 제공Rest-API백엔드단) 사용 등등. pom.xml 의존성 추가.
+- 오라클로 마이그레이션 작업.
+- 웹프로젝트 소스를 스프링프레임워크 버전으로 5.2.5 마이그레이션(버전 업그레이드)
+- 시간이 여유가 되면, eGovFrame메뉴에서 Start > New TemplateProject 심플홈 템플릿 만들어서 커스터 마이징 예정.
+
+#### 20210118(월) 작업예정
+- 지난주 헤로쿠 배포시 DB경로변경, 업로드 경로변경 복잡한 절차를 개선시킨과정은 .properties
+- 로컬PC의 설정파일이 개발용 -헤로쿠용 DB설정파일은 운영서버용
+- 로컬PC용 업로드 경로 개발용 - 헤로쿠용 업로드 경로 운영서버용
+- 현재는 해당되는 xml설정파일에서 개발용과 운영서버용 내용을 변경처리해서 작업합니다.
+- 현업1에서는 globals.properties파일을 만들어서 전역변수로 위 설정내용을 변수처리해서 사용.
+- 현업2에서는 local.properties, prod.properties
+- 용어: properties-속성, product-운영서버, local-개발PC
+- Hsql데이터베이스에서는 JUnit으로 CRUD테스트시 톰캣을 종료하고 하셔야 합니다.
+- 사용자단 게시판 CRUD마무리 예정.
+- 헤로쿠 배포예정.
+- 사용자단, 유효성 검사 기능을 포함해서 마이페이지+회원가입 프로그램처리.
+- 네이버아이디 로그인(네이버에서 제공Rest-API백엔드단) 실습.
+
+#### 20210115(금) 작업
+- 배포 파이프라인 : 개발에서 부터 배포 까지 관리하는 프로그램을 파이프라인 이라고 합니다.
+- 서블렛자바+JSP(jstlX)프로그램 - 스트러츠웹프로그램만들기 - 스프링+jsp(jstl)웹프로그램만들기 - 미래에는 알지못하는 프레임워크
+- --------------------
+- 헤로쿠에 배포하기1-DB부분: root-context.xml
+- --------------------
+- @1 헤로쿠:Hsql DB위치 변경: /tmp/~ + 1회용 초기화 부분 주석 해제
+- @2 PC용 :Hsql DB위치 변경: c[타드라이브]:/~ + 1회원 초기화 부분 주석 처리
+- ------------------------
+- 헤로쿠에 배포하기2-첨부파일부분: servlet-context.xml
+- ------------------------
+- @1 헤로쿠: 업로드 경로 변경: /tmp/~
+- @2 PC용 : 업로드 경로 변경: c[타드라이브]:~
+- ------------------------
+#### 20210114(목) 작업
+- 사용자단 , 댓글 CRUD 마무리OK.
+- HSQL: 간단한 웹프로그램 제작시 사용하는 DB.- 개발자들이 빨리 만들때, 프로토타입, 신규서비스전 간단하게 작업시 주로 이용.Hsql는 서비스용은 아니고, 개발전용 입니다.
+- 임베디드 DB(Hsql)=내장된 DB라이브러리모듈=메모리 DB 단점: 톰캣서버를 재실행하면, 메모리DB에 추가/수정내용이 사라짐
+- 실습은 embeded_hsql_file로 적용예정 입니다.=fileDB의 장점: 톰켓서버를 재 실행해도 Mysql처럼 내용이 보존됨.
+- 헤로쿠(URL)에 배포(HsqlDB로 배포, 메이븐 외부 라이브러리 추가필수 pom.xml수정)
+- 헤로쿠클라우드의 특징: 무료, 1달 사용450시간까지 무료로 접근이 가능.(트래픽시간을 초과했습니다 면서 URL접근이 X)
+- 헤로쿠의 단점: 30분 동안 URL에 접근하지 않으면, ZZZ 휴면상태로 진입 -> 활성화시키는데 20초 정도 필요.
+- 스프링기능중에 스케줄기능 -> 20분마다 1번씩 URL https://kimilguk.herukuapp.com 에 접근하도록 만들면 해결
+- 스프링의 스케즐 프로그램 제작OK.(회원에게 3개월동안 접속하지 않는 사용자들에게 일괄적으로 메세지를 보낼때)
+- ------------------------------------------------------------
+- 사용자단, 게시판 CRUD 마무리.
+
+#### 20210113(수) 작업
+- 이론은 ch13 시작 예정.
+- 사용자단, 게시판/RestApi댓글 CRUD처리.
+- 수업시작전 로그인 에러 자바스크립트 메세지 출력 추가 및 이미지파일미리보기 구형 버전에서 에러나는 문제 처리
+
+```
+login.jsp (아래)
+<script>
+if('${param.msg}' == "fail"){
+	alert('로그인에 실패했습니다.! 상세메세지 ${sessionScope["SPRING_SECURITY_LAST_EXCEPTION"].message}');
+}
+</script>
+CommonController.java (아래)
+	/**
+	 * 게시물 첨부파일 이미지보기 메서드 구현(윈도7,윈도8 IE에서 지원가능)
+	 * 에러메시지 처리: getOutputStream() has already been called for this respons
+	 * @throws IOException 
+	 */
+	@RequestMapping(value = "/image_preview", method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE)
+	@ResponseBody
+	public byte[] getImageAsByteArray(@RequestParam("save_file_name") String save_file_name, HttpServletResponse response) throws IOException {
+		FileInputStream fis = null;
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		fis = new FileInputStream(uploadPath + "/" + save_file_name);
+		int readCount = 0;
+		byte[] buffer = new byte[1024];
+		byte[] fileArray = null;
+	while((readCount = fis.read(buffer)) != -1){
+		baos.write(buffer,0,readCount);
+	}
+	fileArray = baos.toByteArray();
+	fis.close();
+	baos.close();
+	return fileArray;
+	}
+```
+
+#### 20210112(화) 작업
+- 스프링 시큐리티 복습 순서
+- 1). pom.xml 에서 의존성 모듈 확인
+- 2). security-context.xml 에서 설정 내용 확인(인증패턴과 권한 sql쿼리)
+- 3). LoginController클래스 확인(/login_success 매핑부분에서 세션변수처리)
+- 4). JSP영역 사용자단 세션사용 header.jsp/footer.jsp(로그아웃)확인(사용자 상단메뉴/로그아웃처리)
+- 5). AdminController에서 BCryptPasswordEncoder로 해시데이터 회원정보추가/수정 부분 확인
+- 6). JSP영역 관리자단 회원정보추가/수정 부분 검증 
+- 메이븐 업데이트 하신 분들 프로젝트 context-root경로 / 로 변경해 주세요^^
+- 스프링시큐리티 설정(security-context.xml)내용 추가
+- 로그인 페이지 및 로그인 클래스 구현(세션처리)
+
+#### 20210111(월) 작업
+- ch11: DTO(DataTansperObject) = DAO(DataAccessObject)
+- 웹프로그램이 작동되는 순서: 
+- 톰캣(server,web,context 3개xml 순서대로 실행) 
+- -> 스프링시작 순서 : web.xml:404 file not fount,500,400 에러표시)
+- -> root-context -> servlet-context(여기서부터 스프링에러표시)
+- 사용자단 html을 jsp로 변경 처리: board폴더부분 jsp 변환.
+- 공통error.jsp 추가(인터셉터 클래스 이용)
+- 인터셉터하는 목적: 스프링에서 에러가 발생시 에러내용을 가로채서 개발자가 만든 error.jsp로 출력하는 목적.
+- 스프링시큐리티 적용한 로그인 처리(필수기술).
+- web.xml에서 웹필터기능 추가가 필요한 이유: web.xml은 스프링 서블렛 진입전에 실행되는 기능이기 때문에, 스프링 보안에서  스프링 서블렛프로그램(스프링웹프로젝트)실행전에 인증과 권한을 URL기반으로 체크하기 위해서 필터기능이 필요합니다.
+- 스프링 시큐리티 필터기능말고, 대표적인 필터기능솔루션은 글작성시 욕설방지기능 필터 기능으로 작성.
+- 스프링 시큐리티 2가지 기능: 인증기능(로그인체크기능-암호화), 권한기능(권한체크)
+- 네이아이디로그인(SSO)RestAPI는 인증만 가능하기 때문에, 사용이 가능. 권한은 개발자 코드로 부여.
+- ----------------- 2월 3일까지(위 과제물 제출) ---------------------
+- 위 과정이 끝나면, 위 프로젝트, Mysql(마리아DB)로 작성된 소스를 오라클로 마이그레이션(오라클설치및 사용자생성 및 암호추가)
+- 문서작업(완료보고서작업) : 이력서 제출서 사용.
+- IoT(노드MCU보드:아두이노계열)로 임베디드 프로그램 실습.(코로나19상황일때 일주일정도 실습 나와서 합니다. 라즈베리파이 임베디드 리눅스 프로그램=팀작업X-개인작업으로 전환)
+- 안드로이드 스튜디오를 이용해서 안드로이드앱1 제작 후 IoT장비와 통신
+- 안드로이드앱2 제작 후 위 스프링프로젝트외 RestApi통신 회원 정보 조회 및 삭제 처리 기능 실습.
+- 위 앱 제작 실습시 스프링프로젝트 RestAPI서버 컨트롤러 제작 실습을 합니다.
+- 입사지원 시간(사람인 사이트에 이력서 제출): 취업활동.
+- Ps.앱(임베디드)분야 취업하시기에는 1달로 부족합니다. 임베디드 분야로 취업을 원하시는 학생은 개인적으로 더 공부 하셔야 합니다. 그래도, 이과목을 공부하시는 이유는 스프링(자바)에서 일하시다가 임베디드쪽의 일을 하시게 되기 때문에, 그 때 사용하시라고 기술을 배우시게 됩니다.
+ - pom.xml 메이븐(프로그램배포-패키징)에서 관리하는 외부라이브러리 설정 파일 입니다. root-context.xml+context-servlet.xml(스프링빈실행) 파일과는 성격이 틀립니다.
+
+#### 20200108(금) 작업
+- 사용자단 html 소스를 jsp 로 변환하는 작업진행. views폴더안에 home폴더 생성 후 작업진행.
+- HomeController클래스 리퀘스트 매핑부분 추가/수정.
 - 사용자단 html(https://miniplugin.github.io/) 소스를 커스터마이징 후 jsp로 만들기.
+- 부트스트랩과 AdminLTE라이브러리 가져오기(board_view[write].html 상단에 추가:아래)
+
+```
+<!-- Font Awesome -->
+<link rel="stylesheet" href="/resources/plugins/fontawesome-free/css/all.min.css">
+<!-- Bootstrap 4 -->
+<link rel="stylesheet" href="/resources/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css">
+<script src="/resources/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- AdminLte -->
+<link rel="stylesheet" href="/resources/dist/css/adminlte.min.css">	
+<!-- write.html은 서머노트 웹에디터 부분 추가(아래) -->
+<link rel="stylesheet" href="/resources/plugins/summernote/summernote.css">
+<script src="/resources/plugins/summernote/summernote.js"></script>
+```
+- 기존 디자인 수정 2부분(home/css/main.css아래)
+
+```
+상단 body 부분에 !important 추가 후 바로 아래 1줄 추가
+a:hover {color: #fff !important;} <--여기도  임폴턴트 추가
+dl, ol, ul { margin-bottom:0 !important;}
+```
+- 게존 디자인 수정 1부분(home/css/board.css아래)
+- .app_list .tit_lbl { width: 20%; } 라벨 가로크기 기존 21% -> 20%변경
+
 - 인터셉터(가로채기-Interceptor)클래스를 이용해서, 예외처리를 공통 error.jsp 로 바인딩 처리.
 - 스프링시큐리티 로그인 구현 pom.xml 의존성 추가(회원가입시 패스워드 암호화 추가).
-- 헤로쿠 클라우드로 배포(Hsql데이터베이스사용).
-- 사용자단 CRUD 구현.
-- 웹프로젝트 소스를 스프링프레임워크 버전으로 5.2.5 마이그레이션(버전 업그레이드)
-- 오라클로 마이그레이션 작업.
-- 이후 유효성검사, 파스타클라우드, 네이버아이디 로그인(네이버에서 제공Rest-API백엔드단) 사용 등등. pom.xml 의존성 추가.
 
-#### 20200105(화) 작업.
-- 부메랑(크롬의 플러그인): JUnit(스프링-자바 단위테스트=CRUD테스트)과 같은 역할. 
-  RestAPI의 단위테스트(CRUD테스트)를 할때 사용 한 이후 댓글 클래스 작업을 시작.
-- DB -> 매퍼쿼리 -> DAO -> Service -> Controller ->
+#### 20200107(목) 작업
+- prepend, append, after J쿼리 기능.
+- 어제 작업한 댓글 리스트 btn_reply_list 버튼id에 부트스트랩(J쿼리기반의 프레임워크)의 토글기능을 넣어서
+- 하단 댓글리스트(페이징포함)를 나타나고, 숨기는 기능을 넣게되겠습니다.
+- 위 작업: 1. 액션버튼부분 : data-toggle="collapse" data-target="#div_reply"
+- 2. 대상 타켓 부분 <div id="div_reply">토글영역</div>
+- 댓글 jsp에서 Ajax,jQuery사용해서 CRUD처리 마무리.
+- 입사지원시 코딩테스트 할때 아래처럼 기초이론을 구현해보라는 요구사항 때문에 정리(아래)
+- Ps.싱글톤이 사용되는 이유참조: https://shxrecord.tistory.com/132
+- Ps.싱글톤 빈(스프링)에 대해서(1개의 빈은 1개의 빈객체만 생성해서 사용하겠다명시)
+- https://m.blog.naver.com/PostView.nhn?blogId=sksk3479&logNo=221175889439&proxyReferer=https:%2F%2Fwww.google.com%2F
+- Ps.싱글톤 클래스(자바)에 대해서(1개의 클래스는 1개의 인스턴스만 생성해서 사용하겠다명시)
+- 우리가 사용한 경우: 달력 인스턴스 생성. Calendar.getInstance() 참조정보(아래)
+- https://m.blog.naver.com/PostView.nhn?blogId=heartflow89&logNo=221001179016&proxyReferer=https:%2F%2Fwww.google.com%2F
+
+```
+class Singleton{
+	private static Singleton instance = new Singleton(); // 정적필드 / 인스턴스 생성 
+	private Singleton(){} // private 생성자
+	public static Singleton getInstance(){ // getInstance 메서드 정의
+		return instance; // instance 객체 리턴
+	}
+}
+public class SingletonEx {
+	public static void main(String[] args) {
+		Singleton st1 = Singleton.getInstance(); // 싱글톤 인스턴스 호출
+		Singleton st2 = Singleton.getInstance();
+//		Singleton st3 = new Singleton(); // 생성자 이용 인스턴스 생성 불가
+		if(st1 == st2){
+			System.out.println("동일 객체");
+		}else{
+			System.out.println("다른 객체");
+		}
+	}
+}
+```
+
+#### 20200106(수) 작업
+- 파스타는 2주 사용기간 제한 없어질때 까지 이용하는 것은 보류, 헤로쿠(Hsql데이터베이스)사용-스프링시큐리티(*로그인)적용 한 이후에 헤로쿠에 올리겠습니다.
+- 부메랑을 이용해서 댓글 CRUD 테스트 마무리OK.
+- 댓글 페이징처리(매퍼쿼리 ~ 컨트롤러까지 ) - 부메랑 reply_list/10(게시물번호)/1(페이지번호)테스트 OK.
+- jsp에서 Ajax+제이쿼리 화면처리 마무리.
+
+#### 20200105(화) 작업
+- 부메랑(크롬의 플러그인): JUnit(스프링-자바단위테스트=CRUD테스트)과 같은 역할. RestAPI의 단위테스트(CRUD테스트)를 할때 사용 한 이후 댓글 클래스 작업을 시작 합니다.
+- 댓글 DB -> VO -> 매퍼쿼리 -> DAO(Service) -> Controller -> JSP
 - 특이사항: RestAPI에서 Select는 GET이 기본.
 - 게시판에서 GET으로 전송하는 방식1(고전방식): url:"/reply/reply_list?bno=" + bno,
-- 댓글에서 GET으로 전송하는 방식2(시만텍웹방식): url:/reply/reply_list/" + bno,
-- 시만텍웹방식으로 전송하는 목적은 구글검색에 노출되기 쉽게 해서 검색순위를 올리기 위해서(검색광고와 관련)
-- 시만텍웹(의미있는 웹페이지, 주소를 만들자): html5기술, url쿼리스트링에서  ?를 빼고 값만 보내기.
+- 댓글에서 GET으로 전송하는 방식2(시만텍웹방식): url:"/reply/reply_list/" + bno,
+- 시만텍웹방식으로 전송하는 목적은 구글검색에 노출되기 쉽게 해서 검색 순위를 올리기 위해서(검색광고와 관련)
+- 시만텍웹(의미있는 웹페이지, 주소를 만들자!): html5기술, url쿼리스트링에서 ?를 빼고, 값만 보내기. 
 - 관리자단 게시판의 뷰화면의 댓글 RestAPI프로그램작업 시작.
 - board_view.jsp에서 댓글 데이터 Json형식으로 가져오기부터 시작.
 - 이론: Ch9 스프링컨테이너 설정부터 시작.
@@ -140,13 +343,15 @@ $(document).ready(function() {
 });
 </script>
 ```
-#### 20201231(목) 작업예정
-- Http전송 데이터: HEDER데이터 + body(jsp내용)
+
+#### 20201231(목) 작업
+- 어떠한 프로젝트던지 관리자단 시작(CRUD내부로직 마무리) -> 사용자단(관리자단에서 작업했던내용중 CRUD일부만 화면으로 제공) 진행
+- HTTP전송 데이터: HEADER데이터 + body(jsp내용)
 - 첨부파일: 업로드 부분 OK.(학생들확인)
-- 첨부파일: 게시물상세보기 화면에 UUID파일명이 아닌 real_file_name나오게 하기. OK
-- 첨부파일: 다운로드 기능 추가.(한글내용, 한글파일명 깨지는 것 방지로직 추가) OK
-- 첨부파일: 게시물 삭제시 첨부파일과 첨부테이블도 삭제처리 하기.OK
-- 첨부파일: 게시물 수정시 기존첨부파일 삭제 후 업로드 처리 하기.(미수정시는 해당없음)
+- 첨부파일: 게시물상세보기 화면에 UUID파일명이 아닌 real_file_name나오게 하기OK.
+- 첨부파일: 다운로드 기능 추가.(한글내용, 한글파일명 깨지는 것 방지로직 추가)OK.
+- 첨부파일: 게시물 삭제시 첨부파일과 첨부테이블도 삭제처리 하기OK.
+- 첨부파일: 게시물 수정시 기존첨부파일 삭제 후 업로드 처리 하기.(미수정시는 해당없음 확인)OK.
 
 #### 20201230(수) 작업
 - 스프링 이론은 ch08까지 OK.

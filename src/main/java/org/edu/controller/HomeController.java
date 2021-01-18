@@ -1,5 +1,6 @@
 package org.edu.controller;
 
+import java.io.File;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -8,6 +9,7 @@ import java.util.Locale;
 
 import javax.inject.Inject;
 
+import org.edu.dao.IF_BoardDAO;
 import org.edu.service.IF_BoardService;
 import org.edu.util.CommonController;
 import org.edu.util.SecurityCode;
@@ -36,6 +38,8 @@ public class HomeController {
 	@Inject
 	private IF_BoardService boardService;
 	
+	@Inject
+	private IF_BoardDAO boardDAO;
 	@Inject
 	private SecurityCode securityCode;
 	
@@ -75,6 +79,64 @@ public class HomeController {
 		return "home/board/board_view";
 	}
 	
+	@RequestMapping(value="/home/board/board_update",method=RequestMethod.POST)
+	public String board_update(RedirectAttributes rdat,@RequestParam("file") MultipartFile[] files, BoardVO boardVO, PageVO pageVO) throws Exception {
+		//첨부파일 업로드
+		List<AttachVO> delFiles = boardService.readAttach(boardVO.getBno());
+		String[] save_file_names = new String[files.length];
+		String[] real_file_names = new String[files.length];
+		int index = 0;
+		for(MultipartFile file:files) {//여기의 file은 신규 저장하는 파일
+			if(file.getOriginalFilename() != "") {
+				
+				int sun = 0;
+				for(AttachVO file_name:delFiles) {//실제 폴더에서 기존 첨부파일 삭제처리 
+					if(index==sun) {
+						File target = new File(commonController.getUploadPath(),file_name.getSave_file_name());//삭제할 파일경로 지정
+						if(target.exists()) {
+							target.delete();//기존 첨부파일 폴더에서 지우기
+							boardDAO.deleteAttach(file_name.getSave_file_name());//DB에서 기존파일 지우기
+						}
+					}
+					sun = sun + 1;
+				}
+				//신규파일 폴더에 업로드 처리
+				save_file_names[index] = commonController.fileUpload(file);//신규파일 폴더에 업로드
+				real_file_names[index] = file.getOriginalFilename();//신규파일 한글파일명 저장
+			}else{
+				save_file_names[index] = null;//신규파일 폴더에 업로드
+				real_file_names[index] = null;//신규파일 한글파일명 저장
+			}
+			index = index + 1; 
+		}
+		boardVO.setSave_file_names(save_file_names);
+		boardVO.setReal_file_names(real_file_names);
+		boardService.updateBoard(boardVO);//DB에 신규파일 저장기능 호출
+		//게시판 테이블 업데이트+첨부파일테이블 업데이트
+		rdat.addFlashAttribute("msg", "수정");
+		return "redirect:/home/board/board_view?bno="+boardVO.getBno()+"&page="+pageVO.getPage();
+	}
+	@RequestMapping(value="/home/board/board_update",method=RequestMethod.GET)
+	public String board_update(Model model, @ModelAttribute("pageVO") PageVO pageVO, @RequestParam("bno") Integer bno) throws Exception {
+		BoardVO boardVO = boardService.readBoard(bno);
+		//첨부파일처리(아래)
+		List<AttachVO> files = boardService.readAttach(bno);
+		//아래변수 List<AttachVO>세로배치를 가로배치로 변경할때 필요
+		String[] save_file_names = new String[files.size()];
+		String[] real_file_names = new String[files.size()];
+		int cnt=0;
+		//세로데이터를 가로데이터로 변경로직(아래)
+		for(AttachVO file_name:files) {
+			save_file_names[cnt] = file_name.getSave_file_name();
+			real_file_names[cnt] = file_name.getReal_file_name();
+			cnt = cnt +1;
+		}
+		boardVO.setSave_file_names(save_file_names);
+		boardVO.setReal_file_names(real_file_names);
+		model.addAttribute("boardVO", boardVO);
+		
+		return "home/board/board_update";
+	}
 	//사용자 홈페이지 게시판 쓰기 매핑(POST) 오버로드(매개변수의 개수또는 타입이 틀린)메서드이용
 	//jsp에서 board_write메서드를 호출함 -> 호출할때 폼의 필드값을 컨트롤러로 보냄.
 	//컨트롤러에서 받을때 사용하는 매개변수 BoardVO boardVO입니다.
