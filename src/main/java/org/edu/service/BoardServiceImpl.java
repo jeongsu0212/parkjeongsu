@@ -71,8 +71,8 @@ public class BoardServiceImpl implements IF_BoardService {
 			if(save_file_name != null) {//첨부파일배열에서 배열값이 있는경우만
 				real_file_name = real_file_names[index];
 				boardDAO.insertAttach(save_file_name, real_file_name);
-				index = index + 1;
 			}
+			index = index + 1;
 		}
 	}
 
@@ -89,7 +89,7 @@ public class BoardServiceImpl implements IF_BoardService {
 	public void updateBoard(BoardVO boardVO) throws Exception {
 		// 게시물 수정 DAO연결(아래)
 		boardDAO.updateBoard(boardVO);
-		// 첨부파일 등록 DAO연결(아래) 조건은 첨부파일 DB를 삭제 후 
+		// 첨부파일 등록 DAO연결(아래) 조건은 기존 첨부파일 DB를 삭제한 이후
 		Integer bno = boardVO.getBno();
 		String[] save_file_names = boardVO.getSave_file_names();
 		String[] real_file_names = boardVO.getReal_file_names();
@@ -97,8 +97,8 @@ public class BoardServiceImpl implements IF_BoardService {
 		int index = 0;
 		String real_file_name = "";
 		if(save_file_names == null) { return; }
-		for(String save_file_name:save_file_names) {//첨부파일 개수만큼 반복됩니다.
-			//System.out.println("디버그: "+index+"번째 실행" + save_file_names[index]);
+		for(String save_file_name:save_file_names) {//첨부파일 개수 만큼 반복됩니다.
+			//System.out.println("디버그 : "+index+"번째 실행" + save_file_names[index]);
 			if(save_file_name != null) {
 				real_file_name = real_file_names[index];
 				boardDAO.updateAttach(save_file_name, real_file_name, bno);
