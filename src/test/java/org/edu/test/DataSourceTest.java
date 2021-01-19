@@ -22,6 +22,7 @@ import org.edu.vo.MemberVO;
 import org.edu.vo.PageVO;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -38,6 +39,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
+//@PropertySource("classpath:properties/local.properties")//현재클래스에서 전역변수사용시 필요.
 @ContextConfiguration(locations = {"file:src/main/webapp/WEB-INF/spring/**/*.xml"})
 @WebAppConfiguration
 public class DataSourceTest {
@@ -157,7 +159,7 @@ public class DataSourceTest {
 	public void oldQueryTest() throws Exception {
 		//Connection connection = dataSource.getConnection();//root-context사용
 		Connection connection = null;
-		connection = DriverManager.getConnection("jdbc:hsqldb:file:c:/egov/workspace/embeded/hsql_file;hsqldb.lock_file=false","sa","");
+		connection = DriverManager.getConnection("jdbc:hsqldb:file:c:/egov/workspace/embeded/hsql_file.db;hsqldb.lock_file=false","sa","");
 		/* mysql(마리아DB)
 		 * .getConnection("jdbc:log4jdbc:mysql://127.0.0.1:3306/edu","root","apmsetup"
 		 */
