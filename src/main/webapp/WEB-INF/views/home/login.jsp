@@ -4,6 +4,14 @@
 <%@ taglib uri="http://www.springframework.org/security/tags" prefix="sectoken" %>
 <%@ include file="include/header.jsp" %>
 <link rel="stylesheet" href="/resources/home/css/board.css">
+<style>
+.btn_snsLogin {
+background-color:green;
+}
+@media all and (min-width:801px) {
+	.btn_snsLogin {width:230px;}
+}
+</style>
 <script>
 if("${param.msg}" == "fail") {
 	alert('로그인에 실패 했습니다. 이유는 ${sessionScope["SPRING_SECURITY_LAST_EXCEPTION"].message}' );
@@ -15,6 +23,8 @@ $(document).ready(function(){
 	$("input[name='user_id']").focus();//페이지로딩시 첫번째 입력위치로 이동
 });
 </script>
+<script type="text/javascript" src="https://static.nid.naver.com/js/naverLogin_implicit-1.0.2.js" charset="utf-8"></script>
+
 <%-- jsp에서 사용하는 자바주석 --%>
 	<!-- 메인콘텐츠영역 -->
 	<div id="container">
@@ -57,8 +67,10 @@ $(document).ready(function(){
 
 					</ul>
 					<p class="btn_line">
-					<button class="btn_baseColor">로그인</button>
-					</p>	
+					<button type="submit" class="btn_baseColor">로그인</button>
+					</p>
+					<p class="btn_line">
+					<a href="${url}" class="btn_baseColor btn_snsLogin">네이버 아이디로 로그인</a>
 				</fieldset>
 			</form>
 			<!-- //폼영역 -->

@@ -9,6 +9,11 @@ public class HelloWorldApp {
 		sumFunc(memberVO,4);//플러스함수를 실행할때 매개변수 값을 줍니다
 		sumFunc(3,4);
 		//메서드의 특징, 위와 같이 같은메서드명 로드된 매개변수가 다른 방식 오버로드된 메서드라고 합니다. 
+		String testNull = null;
+		String testEmpty = "";
+		System.out.println("null출력" + testNull + "/ empty출력" + testEmpty);
+		//System.out.println("isEmpty메서드null값출력-" + testNull.isEmpty());//에러 NullPointer
+		System.out.println("isEmpty메서드공백값출력-" + testEmpty.isEmpty());
 	}
 	
 	//메서드의 매개변수에 대해서
