@@ -35,7 +35,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
  * 제이유닛4클래스를 사용.
  * 단위테스트는 톰캣이 실행되지 않아도 작동이 되야 합니다.
  * 그래서, 테스트 클래스 상단에 servelet-context.xml 이러한 설정파일을 불러들여서 실행이 가능
- * @author 김일국
+ * @author 박정수
  *
  */
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -81,6 +81,7 @@ public class DataSourceTest {
 		memberVO.setUser_id("dummy_1");
 		memberVO.setUser_name("홍길동");
 		memberVO.setUser_pw("");//암호를 수정하지 않는 사람을 가정...
+		//memberVO.setUser_pw("");//이 셋을 주석으로 적용하면, 아예 보내지 않음 null값 memberVO.getUser_pw() == null
 		memberVO.setEmail("test@test.com");
 		memberVO.setPoint(100);
 		memberVO.setEnabled(true);

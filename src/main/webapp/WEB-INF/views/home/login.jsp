@@ -10,6 +10,11 @@ if("${param.msg}" == "fail") {
 	//스프링 시큐리티는 세션발생시킵니다. 세션스코프는 세션영역을
 }
 </script>
+<script>
+$(document).ready(function(){
+	$("input[name='user_id']").focus();//페이지로딩시 첫번째 입력위치로 이동
+});
+</script>
 <%-- jsp에서 사용하는 자바주석 --%>
 	<!-- 메인콘텐츠영역 -->
 	<div id="container">
