@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.edu.dao.IF_BoardDAO;
@@ -227,7 +229,17 @@ public class AdminController {
 		return "admin/board/board_view";
 	}
 	@RequestMapping(value="/admin/board/board_list",method=RequestMethod.GET)
-	public String board_list(@ModelAttribute("pageVO") PageVO pageVO, Model model) throws Exception {
+	public String board_list(HttpServletRequest request, @RequestParam(value="board_type",required=false) String board_type, @ModelAttribute("pageVO") PageVO pageVO, Model model) throws Exception {
+		//게시판 타입을 세션변수로 저장(아래)
+		HttpSession session = request.getSession();
+		if(board_type != null) {
+			session.setAttribute("session_board_type", board_type);
+		}
+		/* PageVO와 BoardVO에서 세션변수로 get/set하기 떄문.
+		 * if(session.getAttribute("session_board_type") != null) { board_type =
+		 * (String) session.getAttribute("session_board_type");
+		 * pageVO.setBoard_type(board_type);//다중개시판 쿼리추가때문에 추가 }
+		 */
 		//테스트용 더미 게시판 데이터 만들기(아래)
 		/*
 		 * BoardVO input_board = new BoardVO(); input_board.setBno(1);
