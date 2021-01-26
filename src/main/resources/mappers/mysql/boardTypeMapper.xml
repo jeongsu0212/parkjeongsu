@@ -4,7 +4,7 @@
 	<select id="selectBoardType" resultType="org.edu.vo.BoardTypeVO">
 	select * from tbl_board_type order by board_sun asc
 	</select>
-	<insert id="insetBoardType">
+	<insert id="insertBoardType">
 	insert into tbl_board_type (
 	board_type,
 	board_name,
@@ -19,6 +19,7 @@
 	update tbl_board_type set
 	board_name = #{board_name},
 	board_sun = #{board_sun}
+	where board_type = #{board_type}
 	</update>
 	<delete id="deleteBoardType">
 	delete from tbl_board_type where board_type = #{board_type}

@@ -54,7 +54,7 @@ delete from tbl_board where bno = #{bno}
 </delete>
 <insert id="insertBoard">
 insert into tbl_board (board_type,title,content,writer,reg_date) 
-values(#{title},#{content},#{writer},now())
+values(#{board_type},#{title},#{content},#{writer},now())
 </insert>
 <select id="readAttach" resultType="org.edu.vo.AttachVO">
 select *  from tbl_attach where bno = #{bno} order by reg_date desc

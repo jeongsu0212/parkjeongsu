@@ -1,13 +1,3 @@
-#### Hsql 데이터베이스 사용 개선
-- jdbc:hsqldb:file:c:/egov/workspace/embeded/hsql_file.db 이 내용이 사용된 부분에  ;hsqldb.lock_file=false를 추가하면, 사용시 lock이 걸리지 않고 톰캣과 Junit 동시 사용이 가능합니다.(아래 2가지 수정)
-- root-context.xml 과 
-- Junit 작업파일에서 oldQueryTest() 메서드 부분
-- 작업결과 아래와 같이 표현 됩니다.
-- jdbc:hsqldb:file:c:/egov/workspace/embeded/hsql_file.db;hsqldb.lock_file=false
-- 단, 기존에 만들었던 DB폴더에서 lock파일(hsql_file.lck)을 지우셔야 합니다.
-- 다음 실행 부터는 생성되지 않기 때문에 톰캣실행과 JUnit및 다른 프로그램 작업도 가능합니다.
-![ex_screenshot](./git_img/hsql_lock_delete.jpg)
-
 ### 기본정보
 - 스프링관리자 AdminLTE템플릿 샘플: 
 - https://adminlte.io/themes/v3/pages/forms/general.html
@@ -60,25 +50,152 @@
 - web.xml에 스프링시큐리티 설정 추가OK.
 - security-context.xml OK.
 - 스프링빈클래스작업: 로그인 구현 + 관리자 회원등록시 패스워드 암호화 추가 OK.
----------------------- 작업중 ------------------------------
-- 사용자단 CRUD 구현(RestAPI 댓글포함).
---------------------------------------------------------------------
+- 사용자단 CRUD 구현(RestAPI 댓글포함)OK.
 - 헤로쿠 클라우드로 배포(Hsql데이터베이스사용).
-- 이후 유효성검사(객체검증), 파스타클라우드, 네이버아이디 로그인(네이버에서 제공Rest-API백엔드단) 사용 등등. pom.xml 의존성 추가.
-- 오라클로 마이그레이션 작업.
+- 이후 유효성검사(객체검증,마이페이지,회원가입-탈퇴), 네이버아이디 로그인(네이버에서 제공Rest-API백엔드단) 사용 등등. pom.xml 의존성 추가.
+---------------------- 작업중 ------------------------------
+- 게시판분리(공지사항과 겔러리게시판): 부모테이블과 필드추가 를 이용해서 다중게시판 생성처리.
+--------------------------------------------------------------------
+- 오라클로 마이그레이션 작업.(책,2월3일에 시작하는 과목)
 - 웹프로젝트 소스를 스프링프레임워크 버전으로 5.2.5 마이그레이션(버전 업그레이드)
 - 시간이 여유가 되면, eGovFrame메뉴에서 Start > New TemplateProject 심플홈 템플릿 만들어서 커스터 마이징 예정.
+- 파스타클라우드 제일 마직막 달에 2주 기간중 배포(스스로 재배포가능할 정도수준-mysql을사용)
+- IoT(아두이노,라즈베리파이-C언어책3권) 2주
+- 안드로이드앱(클라이언트)-통신-자바:스프링웹프로젝트(API서버) 2주
 
-#### 20210118(월) 작업예정
-- 지난주 헤로쿠 배포시 DB경로변경, 업로드 경로변경 복잡한 절차를 개선시킨과정은 .properties
-- 로컬PC의 설정파일이 개발용 -헤로쿠용 DB설정파일은 운영서버용
+#### 20210125(월) 작업
+- 컨트롤러에서 PageVO 또는 BoardVO가 Get/Set필요한 순간 항상 아래의 액션이 필요
+- pageVO.setBoard_Type(session.getAttribute("session_board_type")); 페이지 진입시 항상필요
+- boardVO.setBoard_Type(session.board_type"));게시판 CRUD시 항상 필요
+- 위와 같이 MVC에서 항상 실행되는 부분을 뽑아내서 공통실행으로 만드는 과정을 AOP(관점지향프로그래밍)라고 함.
+--------------------------------------------------------------------
+- 세션변수 session_board_type를 컨트롤러,서비스,DAO,매퍼 모두VO기준 get/set발생할때 세션 변수를 사용할 예정. AOP또는 Interceptor가로채기 클래스를 이용해서 구현예정.
+- 기존 작업한 BoardVO 와 PageVO 2군데  주석처리 -> //this.board_type = "notice";//세션변수를 사용할 예정.
+(아래 DebugAdvice클래스의 AOP소스)
+
+```
+@Around("execution(* org.edu.controller.*Controller.*(..))")
+public Object sessionGetSet(ProceedingJoinPoint pjp) throws Throwable {
+	logger.info("AOP 세션GetSet 시작=========================");
+	HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+	PageVO pageVO = null;
+	BoardVO boardVO = null;
+	String board_type = null;
+    for(Object object:pjp.getArgs()){
+    	logger.info("디버그 파라미터 출력: " + object);
+        if(object instanceof String){
+            board_type = (String) object;
+        }else if(object instanceof PageVO){
+            pageVO = (PageVO) object;
+        }else if(object instanceof BoardVO){
+            boardVO = (BoardVO) object;
+        }
+    }
+    if(request != null){
+    	HttpSession session = request.getSession();
+    	if(board_type != null) {
+			session.setAttribute("session_board_type", board_type);
+		}
+    	if(session.getAttribute("session_board_type") != null ) {
+    		board_type = (String) session.getAttribute("session_board_type");
+    	}
+        if(pageVO != null){
+        	pageVO.setBoard_type(board_type);//다중게시판 쿼리때문에 추가
+        }
+        if(boardVO != null){
+        	boardVO.setBoard_type(board_type);//다중게시판 쿼리때문에 추가
+        }
+    }
+    Object returnObj = pjp.proceed();
+	logger.info("AOP GetSet 끝 ==========================");
+	return returnObj;
+}
+```
+- AdminController에서 작업한 board_list 메서드의 HttpServletRequest request, 부분은 제외 시킵니다.(AOP에서 구현했기 때문에)
+- 바로 아래 코드도 주석처리(AOP에서 구현했기 때문에)
+
+```
+HttpSession session = request.getSession();
+if(board_type != null) {
+	session.setAttribute("session_board_type", board_type);
+}
+```		
+- 관리자단 게시판생성 CRUD 작업예정.(다중게시판)
+- 사용자단 게시판생성에 영향을 받는 부분 작업예정.
+
+#### 20210122(금) 작업
+- 시작전, sns용 전역변수 처리 후 헤로쿠에도 배포 후에도 로그인 확인
+
+```
+#sns로그인 접속정보: sns.properties 에 있는 내용
+SnsClientID=본인아이디
+SnsClientSecret=본인암호
+SnsCallbackUri=http://127.0.0.1:8080/login_callback
+```
+```
+@PropertySource("classpath:properties/sns.properties") 추가
+//설정파일에서 변수값으로 가져옴 sns.properties 에 있는 내용
+@Value("${SnsClientID}")
+private String CLIENT_ID;
+@Value("${SnsClientSecret}")
+private String CLIENT_SECRET;
+@Value("${SnsCallbackUri}")
+private String REDIRECT_URI;
+```
+- 관리자단에 게시판 생성 메뉴추가 후 작업진행 예정.
+
+#### 20210121(목) 작업
+- 기능추가: DB-erd수정 -> 물리DB싱크 -> VO클래스 추가/변경 -> 매퍼쿼리추가/수정 -> DAO/Service/Controller 추가/수정 -> JSP단 추가/수정
+- varchar -> int 순서정렬 : 문자일때 1, 10, 2, 3, 4 -> 숫자 1,2,3,4...10, 11
+- 인증(Authentication) - 스프링시큐리티에서 enalbed 가 인증체크
+- 권한(Authorization) - 스프링시큐리티에서 ROLE_ADMIN, ROLE_USER 가 권한체크 
+- 콜백 URL: function() 콜백함수와 같은 기능처럼=자동실행되는 함수처럼 로그인 URL로 자동으로 이동하는 방법이 콜백URL
+- 로그인 후 이동할 URL == 콜백URL 과 같은 이야기
+- 네아로 서비스URL : http://localhost:8080 -> http://127.0.0.1:8080
+- 시작전, /admin/member/member_update (AdminController클래스매핑)에서 조건변경
+- memberVO.getUser_pw() != null -> 추가 || memberVO.getUser_pw() != ""
+- 회원가입 프로그램처리 결과확인.(회원가입 후 바로 로그인X, 관리자가 enabled true로 변경 후 신규회원이 로그인 가능.)
+- 네이버아이디 로그인(네이버에서 제공Rest-API백엔드단) 실습OK.
+
+#### 20210120(수) 작업
+- 이론은 ch13~ch16 마무리OK.
+- 시작전, 마이페이지 .app_content input (board.css 246라인 부분 width:100% 에서 브라우저초기화 inherit로 변경OK.
+- 시작전, 마이페이지 권한부분에서 ROLE_ADMIN추가 및 disabled 처리 및 input hidden 으로 값 지정.
+- 회원탈퇴 여부도 disabled처리 및 input hidden으로 값 지정.
+- 사용자단, 유효성 검사 기능을 포함해서 마이페이지OK.
+- 관리자단, @Valid 애노테이션 사용해서 유효성 검사 실습OK.(pom.xml 외부모듈추가)
+
+#### 20210119(화) 작업
+- 메인페이지 최근게시물 처리, 최근이미지 처리(1개의 게시판으로 처리OK)
+- 헤로쿠 배포OK.
+- 수업전 어제 Update확인 및 Junit에서 properties파일 로딩해서 전역변수 사용하기 처리 추가.
+- @PropertySource("classpath:properties/local.properties") J유닛파일상단에 추가(전역변수 필요없음)
+- root-context.xml에서, dataSource-hslq_local 을 dataSource로 알리아스(별칭)를 만들어서 Junit DB작동 처리
+- 사용자단 게시판 CRUD마무리OK.(Delete작업)
+
+#### 20210118(월) 작업
+- 세로데이터 형식(DB에서 쿼리로 출력되는 원본데이터가 레코드데이터==세로데이터)
+- [ 'attach_list' {
+- {'a.jpg','슬라이드1.jpg'},
+- {'b.jpg','슬라이드2.jpg'},
+- {'c.jpg','슬라이드3.jpg'}
+- } ]
+- 위 데이터를 jsp에서 출력할때는 세로데이터로 나옵니다. foreach(items:'${attach_list}' var='file_name') {<li>file_name.save_file_name</li>}
+- 위 세로 데이터를 가로 데이터로 변경하면 출력은
+- save_file_names = {"a.jpg","b.jpg","c.jpg"};(가로데이터==변수데이터)
+- real_file_names = {"슬라이드1.jpg","슬라이드2.jpg","슬라이드2.jpg"};(가로데이터==변수데이터)
+- 레포트툴을 사용하시면(학점출력, 고지서 금액출력, 증명서출력), 결과 확인이 가능합니다.
+- 지난주 헤로쿠 배포시 DB경로변경, 업로드경로변경 복잡한 절차를 개선시킨과정은 .properties파일로 전역변수 처리해서 OK.
+- 지금은 Hsql이나 Mysql이나 쿼리가 같습니다. 하지만, 만약 oracle쿼리는 AI가없기 때문에 많이 틀립니다. 그래서, 쿼리 경로도 전역변수로 처리합니다.
+- 로컬PC의 DB설정파일이 개발용 - 헤로쿠용 DB설정파일은 운영서버용
 - 로컬PC용 업로드 경로 개발용 - 헤로쿠용 업로드 경로 운영서버용
-- 현재는 해당되는 xml설정파일에서 개발용과 운영서버용 내용을 변경처리해서 작업합니다.
+- 현재는 해당되는 xml 설정파일에서 개발용과 운영서버용 내용을 변경처리해서 작업합니다.
 - 현업1에서는 globals.properties파일을 만들어서 전역변수로 위 설정내용을 변수처리해서 사용.
 - 현업2에서는 local.properties, prod.properties
-- 용어: properties-속성, product-운영서버, local-개발PC
+- 용어: 프로퍼티즈(properties)-속성, 프로덕트(product)-운영서버, 로컬(local)-개발PC
 - Hsql데이터베이스에서는 JUnit으로 CRUD테스트시 톰캣을 종료하고 하셔야 합니다.
-- 사용자단 게시판 CRUD마무리 예정.
+- 사용자단 게시판 CRUD마무리 예정.(*Update, Delete)
+- 메인페이지 최근게시물 처리, 최근이미지 처리(1개의 게시판으로 처리예정)
 - 헤로쿠 배포예정.
 - 사용자단, 유효성 검사 기능을 포함해서 마이페이지+회원가입 프로그램처리.
 - 네이버아이디 로그인(네이버에서 제공Rest-API백엔드단) 실습.
