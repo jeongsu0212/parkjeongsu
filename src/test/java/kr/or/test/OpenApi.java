@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * OpenApi클래스로 HRD-Net에서 제공하는 구직훈련과정API 목록을 출력하는 자바앱
- * @author 김일국
+ * @author 박정수
  *
  */
 public class OpenApi {

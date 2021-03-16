@@ -49,7 +49,7 @@ public class AdminController {
 	IF_BoardService boardService;//게시판인터페이스를 주입받아서 boardService오브젝트 생성.
 	
 	@Inject
-	IF_BoardDAO boardDAO;//jsp-Controller=Service-DAO-Mapper-DB
+	IF_BoardDAO boardDAO;//jsp-Controller-Service-DAO-Mapper-DB
 	
 	@Inject
 	IF_MemberService memberService;//멤버인터페이스를 주입받아서 memberService오브젝트 변수를 생성.
@@ -65,18 +65,18 @@ public class AdminController {
 		pageVO.setBoard_type(board_type);
 		int board_count = boardService.countBoard(pageVO);
 		if(board_count > 0) {
-			rdat.addFlashAttribute("msg_fail", "삭제실패,원인은 해당게시판의 게시물내용이 존재합니다. 삭제");
+			rdat.addFlashAttribute("msg_fail", "해당게시판의 게시물내용이 존재합니다. 삭제");
 			return "redirect:/admin/bbs_type/bbs_type_update?board_type="+board_type;
-		} else {
+		}else {
 			boardTypeService.delete_board_type(board_type);
-			rdat.addFlashAttribute("msg","삭제");
+			rdat.addFlashAttribute("msg", "삭제");
 		}
 		return "redirect:/admin/bbs_type/bbs_type_list";
 	}
 	//게시판생성관리 등록매핑(POST)
 	@RequestMapping(value="/admin/bbs_type/bbs_type_write",method=RequestMethod.POST)
-	public String bbs_type_write(BoardTypeVO boardTypeVO, RedirectAttributes rdat) throws Exception {
-	//메서드명이 같고 , 로드된 매개변수가 틀린방식을 오버로드
+	public String bbs_type_wrtie(BoardTypeVO boardTypeVO, RedirectAttributes rdat) throws Exception {
+		//메서드명이 같고, 로드된 매개변수가 틀린방식을 오버로드
 		boardTypeService.insert_board_type(boardTypeVO);
 		rdat.addFlashAttribute("msg", "등록");
 		return "redirect:/admin/bbs_type/bbs_type_list";
@@ -88,6 +88,7 @@ public class AdminController {
 		
 		return "admin/bbs_type/bbs_type_write";
 	}
+	
 	//게시판생성관리 수정매핑(POST)
 	@RequestMapping(value="/admin/bbs_type/bbs_type_update",method=RequestMethod.POST)
 	public String bbs_type_update(BoardTypeVO boardTypeVO,RedirectAttributes rdat) throws Exception {
@@ -98,7 +99,7 @@ public class AdminController {
 	//게시판생성관리 수정매핑(Get)
 	@RequestMapping(value="/admin/bbs_type/bbs_type_update",method=RequestMethod.GET)
 	public String bbs_type_update(@RequestParam("board_type") String board_type,Model model) throws Exception {
-
+		
 		BoardTypeVO boardTypeVO = boardTypeService.view_board_type(board_type);
 		model.addAttribute("boardTypeVO", boardTypeVO);
 		return "admin/bbs_type/bbs_type_update";
@@ -116,20 +117,23 @@ public class AdminController {
 		List<AttachVO> delFiles = boardService.readAttach(bno);
 		//List<HashMap<String,Object>> delFiles_noUse = boardService.readAttach_noUse(bno);
 		boardService.deleteBoard(bno);
-		//첨부파일 삭제:DB부터 먼저 삭제 후 폴더에서 첨부파일을 삭제
+		//첨부파일 삭제:DB부터 먼저삭제 후 폴더에서 첨부파일 삭제
 		for(AttachVO file_name:delFiles) {
-			//실제파일 삭제 로직(아래) File클래스(폴더경로,파일명)
+			//파일 삭제 로직(아래 File클래스(폴더경로,파일명)
 			File target = new File(commonController.getUploadPath(), file_name.getSave_file_name());
 			if(target.exists()) {
-				target.delete();//실제 지워짐.
+				target.delete();//실제 파일 지워짐.
 			}
 		}
 		/*
-		 * for(HashMap<String,Object> file_name:delFiles_noUse) { //실제파일 삭제 로직(아래)
-		 * File클래스(폴더경로,파일명) File target = new File(commonController.getUploadPath(),
-		 * (String) file_name.get("save_file_name")); if(target.exists()) {
-		 * target.delete();//실제 지워짐. } }
-		 */
+		for(HashMap<String,Object> file_name:delFiles_noUse) {
+			//파일 삭제 로직(아래 File클래스(폴더경로,파일명)
+			File target = new File(commonController.getUploadPath(), (String) file_name.get("save_file_name"));
+			if(target.exists()) {
+				target.delete();//실제 파일 지워짐.
+			}
+		}
+		*/
 		rdat.addFlashAttribute("msg", "삭제");
 		return "redirect:/admin/board/board_list?page=" + pageVO.getPage();//삭제할 당시의 현재페이지를 가져가서 리스트로보줌
 	}
@@ -148,17 +152,18 @@ public class AdminController {
 			cnt = cnt + 1;
 		}
 		/*
-		 * for(HashMap<String, Object> file_name:files_noUse) {//세로데이터를 가로데이터로 변경하는 로직
-		 * save_file_names[cnt] = (String) file_name.get("save_file_name");//형변환 cast
-		 * real_file_names[cnt] = (String) file_name.get("real_file_name"); cnt = cnt +
-		 * 1; }
-		 */
+		for(HashMap<String, Object> file_name:files_noUse) {//세로데이터를 가로데이터로 변경하는 로직
+			save_file_names[cnt] = (String) file_name.get("save_file_name");//형변환 cast
+			real_file_names[cnt] = (String) file_name.get("real_file_name");
+			cnt = cnt + 1;
+		}
+		*/
 		//배열형출력값(가로) {'save_file_name0','save_file_name1',...}
 		boardVO.setSave_file_names(save_file_names);
 		boardVO.setReal_file_names(real_file_names);
-		//시큐어코딩 적용(아래)
-		String xss_data = boardVO.getContent();
-		boardVO.setContent(securityCode.unscript(xss_data));
+		//시큐어코딩 시작 적용(아래) jsp에서 c:out jstl로 대체
+		//String xss_date = boardVO.getContent();
+		//boardVO.setContent(securityCode.unscript(xss_date));
 		//시큐어코딩 끝
 		model.addAttribute("boardVO", boardVO);
 		//model.addAttribute("board_type_list", "게시판타입 리스트 오브젝트");
@@ -215,7 +220,7 @@ public class AdminController {
 	public String board_write(RedirectAttributes rdat,@RequestParam("file") MultipartFile[] files, BoardVO boardVO) throws Exception {
 		//post받은 boardVO내용을 DB서비스에 입력하면 됩니다.
 		//dB에 입력후 새로고침명령으로 게시물 테러를 당하지 않으려면, redirect로 이동처리 합니다.(아래)
-		String[] save_file_names = new String[files.length];//배열크기가 존재하는 변수 생성
+		String[] save_file_names = new String[files.length];//배열크기가 존재하는 변수 생성 
 		String[] real_file_names = new String[files.length];
 		int index = 0;
 		//첨부파일이 있으면, 첨부파일 업로드처리 후 게시판DB저장+첨부파일DB저장
@@ -224,7 +229,7 @@ public class AdminController {
 				save_file_names[index] = commonController.fileUpload(file);//폴더에 업로드저장완료
 				real_file_names[index] = file.getOriginalFilename();//"한글파일명.jpg"
 			}
-			index = index + 1;//배열 인덱스 변수값 증가처리
+			index = index + 1;//배열 인덱스 변수값 증가처리.
 		}
 		boardVO.setSave_file_names(save_file_names);//UUID로 생성된 유니크한 파일명
 		boardVO.setReal_file_names(real_file_names);
@@ -233,6 +238,7 @@ public class AdminController {
 		rdat.addFlashAttribute("msg", "저장");
 		return "redirect:/admin/board/board_list";
 	}
+	
 	@RequestMapping(value="/admin/board/board_view", method=RequestMethod.GET)
 	public String board_view(@ModelAttribute("pageVO") PageVO pageVO, @RequestParam("bno") Integer bno, Model model) throws Exception {
 		//jsp로 보낼 더미 데이터 boardVO에 담아서 보낸다.
@@ -267,7 +273,7 @@ public class AdminController {
 		String[] real_file_names = new String[files.size()];
 		int cnt = 0;
 		for(AttachVO file_name:files) {//세로데이터를 가로데이터로 변경하는 로직
-			save_file_names[cnt] = file_name.getSave_file_name();//형변환 cast
+			save_file_names[cnt] = file_name.getSave_file_name();
 			real_file_names[cnt] = file_name.getReal_file_name();
 			cnt = cnt + 1;
 		}
@@ -276,7 +282,8 @@ public class AdminController {
 			save_file_names[cnt] = (String) file_name.get("save_file_name");//형변환 cast
 			real_file_names[cnt] = (String) file_name.get("real_file_name");
 			cnt = cnt + 1;
-		}*/
+		}
+		*/
 		//배열형출력값(가로) {'save_file_name0','save_file_name1',...}
 		boardVO.setSave_file_names(save_file_names);
 		boardVO.setReal_file_names(real_file_names);
@@ -287,21 +294,23 @@ public class AdminController {
 		model.addAttribute("checkImgArray", commonController.getCheckImgArray());
 		return "admin/board/board_view";
 	}
+	
 	@RequestMapping(value="/admin/board/board_list",method=RequestMethod.GET)
 	public String board_list(@ModelAttribute("pageVO") PageVO pageVO, Model model) throws Exception {
 		//게시판 타입을 세션변수로 저장(아래)
 		/* AOP기능으로 대체(아래)
-		HttpServletRequest request, @RequestParam(value="board_type",required=false) String board_type
+		HttpServletRequest request, @RequestParam(value="board_type",required=false) String board_type,
 		HttpSession session = request.getSession();
 		if(board_type != null) {
 			session.setAttribute("session_board_type", board_type);
 		}
-		 //PageVO와 BoardVO에서 세션변수로 get/set하기 떄문.
-		 if(session.getAttribute("session_board_type") != null) { 
-		 board_type = (String) session.getAttribute("session_board_type");
-		 pageVO.setBoard_type(board_type);//다중개시판 쿼리추가때문에 추가 }
+		//PageVO와 BoardVO에서 세션변수로 get/set 하기 때문에 
+		if(session.getAttribute("session_board_type") != null ) {
+			board_type = (String) session.getAttribute("session_board_type");
+			pageVO.setBoard_type(board_type);//다중게시판 쿼리때문에 추가
 		}
 		*/
+		
 		//테스트용 더미 게시판 데이터 만들기(아래)
 		/*
 		 * BoardVO input_board = new BoardVO(); input_board.setBno(1);
@@ -344,12 +353,12 @@ public class AdminController {
 	@RequestMapping(value="/admin/member/member_write",method=RequestMethod.POST)
 	public String member_write(@Valid MemberVO memberVO) throws Exception {
 		//아래 GET방식의 폼 출력화면에서 데이터 전송받은 내용을 처리하는 바인딩.
-		//POST방식으로 넘어온 user_pw값을 BCryptPasswordEncoder클래스로 암호화 시킴.
-				if(memberVO.getUser_pw() != null) {
-					BCryptPasswordEncoder passwordencoder = new BCryptPasswordEncoder();
-					String userPwEncoder = passwordencoder.encode(memberVO.getUser_pw());
-					memberVO.setUser_pw(userPwEncoder);
-				}
+		//POST방식으로 넘어온 user_pw값을 BCryptPasswordEncoder클래스로 암호시킴
+		if(memberVO.getUser_pw() != null) {
+			BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+			String userPwEncoder = passwordEncoder.encode(memberVO.getUser_pw());
+			memberVO.setUser_pw(userPwEncoder);
+		}
 		//DB베이스 입력/출력/삭제/수정 처리-다음에...
 		memberService.insertMember(memberVO);
 		return "redirect:/admin/member/member_list";//절대경로로 처리된 이후에 이동할 URL주소를 여기에 반환
@@ -370,11 +379,11 @@ public class AdminController {
 	
 	@RequestMapping(value="/admin/member/member_update",method=RequestMethod.POST)
 	public String member_update(PageVO pageVO,@Valid MemberVO memberVO) throws Exception {
-		//POST방식으로 넘어온 user_pw값을 BCryptPasswordEncoder클래스로 암호화 시킴.
+		//POST방식으로 넘어온 user_pw값을 BCryptPasswordEncoder클래스로 암호시킴
 		if(memberVO.getUser_pw() == null || memberVO.getUser_pw() == "") {
 		} else {
-			BCryptPasswordEncoder passwordencoder = new BCryptPasswordEncoder();
-			String userPwEncoder = passwordencoder.encode(memberVO.getUser_pw());
+			BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+			String userPwEncoder = passwordEncoder.encode(memberVO.getUser_pw());
 			memberVO.setUser_pw(userPwEncoder);
 		}
 		//POST방식으로 넘어온 값을 DB수정처리하는 역할
@@ -466,8 +475,29 @@ public class AdminController {
 	
 	//bind:묶는다는 의미, /admin 요청URL경로와 admin/home.jsp를 묶는다는 의미.
 	@RequestMapping(value="/admin",method=RequestMethod.GET)
-	public String admin() throws Exception {
+	public String admin(Model model) throws Exception {
+		//대시보드 만들기 1번 방법: ModelMap<key:objcet>값을 만들어서 보내기
+		PageVO pageVO = new PageVO();
+		pageVO.setPage(1);
+		pageVO.setPerPageNum(5);
+		pageVO.setQueryPerPageNum(4);
+		List<MemberVO> latest_member = memberService.selectMember(pageVO);
+		model.addAttribute("latest_member", latest_member);
+
 		return "admin/home";//상대경로 파일위치
+	}
+	//관리자단 대시보드에 나타낼 다중게시판 최근게시물 출력하는 바인딩
+	@RequestMapping(value="/admin/latest/latest_board",method=RequestMethod.GET)
+	public String latest_board(@RequestParam("board_type") String board_type,Model model) throws Exception {
+		PageVO pageVO = new PageVO();
+		pageVO.setBoard_type(board_type);//jsp > import jstl로 ?~쿼리스트링으로 받은 변수값
+		pageVO.setPage(1);
+		pageVO.setPerPageNum(5);
+		pageVO.setQueryPerPageNum(5);
+		List<BoardVO> latest_list = boardService.selectBoard(pageVO);
+		model.addAttribute("latest_list", latest_list);
+		
+		return "admin/latest/latest_board";
 	}
 	
 }
