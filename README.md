@@ -1,3 +1,60 @@
+#### 작업예정 정리
+- 혼자공부하는 C언어 책 목차확인 예정(IoT13번과목진행바로전).
+- 파스타클라우드 제일 마직막 달에 2주기간에egov배포(클라우드용-mysql을사용)
+또는 파스타 미지원시 egov에 스프링시큐니티 적용(소스참조:https://github.com/miniplugin/egov )
+- IoT(아두이노,노드MCU보드로 실습-C언어책3권) 2주
+- 안드로이드앱(클라이언트)-통신-자바:스프링웹프로젝트(API서버) 2주
+- 앱apk만들어서(학생모두) 구글 플레스토어에 올리기(강사만).
+- -----------------------------------------------
+#### 20210318(목) 작업예정.
+- SQLite앱 CRUD에 람다식 적용예정.
+- 앱을.apk(.aab)로 만들어서 플레이스토어에 업로드 하는 방법(강사만진행).
+- 스프링수업전: 사용자화면에서 게시글 삭제로직에도 //수정시 본인이 작성한 글인지 체크(아래) 로직 추가예정.
+- 관리자관리에서 사용자 프로필이미지 1개 업로드 기능 추가예정(다중파일X).
+- [기술참조]게시판 권한을 주는 로직이 필요하다면: 관리자 게시판생성관리에 게시판 권한을 주는 필드가 필요함
+- 파일명은 사용자ID(고유값)로 강제변경 후 업로드 되게 처리예정.(DB저장X,다운로드X: 첨부파일 업로드 고유기능만 확인)
+- 업로드 폴더명은 profile 폴더를 생성 해서 프로필 이미지전용으로 사용.
+- 작업결과 헤로쿠 클라우드에 배포.
+```
+// 폴더를 만들 디렉토리 경로(누구나 직접접근가능한 resources 폴더사용, 게시판업로드폴더는 직접접근 불가)
+String folderPath = request.getServletContext().getRealPath("/resources/profile");
+File makeFolder = new File(folderPath);
+// folderPath의 디렉토리가 존재하지 않을경우 디렉토리 생성.
+ if(!makeFolder.exists()) {
+   // 폴더를 생성합니다. 파일생성은 FileCopyUtils.copy(경로+파일)
+   // 참고로, 파일다운로드는 ByteArrayOutputStream 클래스 사용
+   makeFolder.mkdir(); 
+ }
+```
+
+#### 20210317(수) 작업.
+- 스프링 프로젝트 사용자단 글 수정시 본인 글만 수정가능하게 처리OK.
+- 위 작업의 전제조건은 글 작성시 작성자 ID가 저장되는 조건이 필수 입니다.
+- 안드로이드 앱 CRUD OK.
+- 취업처 2가지: 1) 프로젝트 단가 높은곳 1년에 1~2건. 2) 1달 10개 이상하는 프로젝트 작업하는 곳.
+- 12.애플리케이션 테스트 수행 과목 진도 나감(문서작업2건-아키텍처구조도엑셀,스프링프로젝트 매뉴얼ppt).
+
+#### 20210316(화) 작업.
+- 수업전: 홈페이지 상단의 로그아웃시 세션 날리는 부분 확인OK, 
+- 위가 제대로 작동되면, 페이지상단에 Mypage(사용자그룹)와 AdminLTE(관리자그룹)로 다르게 나옴 OK.
+- 아래 2가지는 스프링 프로젝트 에서 작업OK.
+- AdminLTE 관리자단 대시보드에 최신회원등록자5명 디자인 출력OK.
+- 최신공지사항/겔러리/...다중게시판 각각 5개씩 디자인 출력예정OK.
+- 최신게시물 불러오기 2가지 방법 작업중(아래) 
+- <c:import url="~.do?board_type=${boardTypeVO.board_type}" />
+- 1) import방법(효율적-실습) / 2)ModelMap방법(비효율적-방법만확인) <key,Object=3개반복>
+- 애플리케이션 설계 시험(과제물제출)OK.
+
+#### Hsql 데이터베이스 사용 개선
+- jdbc:hsqldb:file:c:/egov/workspace/embeded/hsql_file.db 이 내용이 사용된 부분에  ;hsqldb.lock_file=false를 추가하면, 사용시 lock이 걸리지 않고 톰캣과 Junit 동시 사용이 가능합니다.(아래 2가지 수정)
+- root-context.xml 과 
+- Junit 작업파일에서 oldQueryTest() 메서드 부분
+- 작업결과 아래와 같이 표현 됩니다.
+- jdbc:hsqldb:file:c:/egov/workspace/embeded/hsql_file.db;hsqldb.lock_file=false
+- 단, 기존에 만들었던 DB폴더에서 lock파일(hsql_file.lck)을 지우셔야 합니다.
+- 다음 실행 부터는 생성되지 않기 때문에 톰캣실행과 JUnit및 다른 프로그램 작업도 가능합니다.
+![ex_screenshot](./git_img/hsql_lock_delete.jpg)
+
 ### 기본정보
 - 스프링관리자 AdminLTE템플릿 샘플: 
 - https://adminlte.io/themes/v3/pages/forms/general.html
@@ -53,23 +110,201 @@
 - 사용자단 CRUD 구현(RestAPI 댓글포함)OK.
 - 헤로쿠 클라우드로 배포(Hsql데이터베이스사용).
 - 이후 유효성검사(객체검증,마이페이지,회원가입-탈퇴), 네이버아이디 로그인(네이버에서 제공Rest-API백엔드단) 사용 등등. pom.xml 의존성 추가.
----------------------- 작업중 ------------------------------
 - 게시판분리(공지사항과 겔러리게시판): 부모테이블과 필드추가 를 이용해서 다중게시판 생성처리.
---------------------------------------------------------------------
+---------------------- 작업중 ------------------------------
 - 오라클로 마이그레이션 작업.(책,2월3일에 시작하는 과목)
+--------------------------------------------------------------------
 - 웹프로젝트 소스를 스프링프레임워크 버전으로 5.2.5 마이그레이션(버전 업그레이드)
 - 시간이 여유가 되면, eGovFrame메뉴에서 Start > New TemplateProject 심플홈 템플릿 만들어서 커스터 마이징 예정.
 - 파스타클라우드 제일 마직막 달에 2주 기간중 배포(스스로 재배포가능할 정도수준-mysql을사용)
 - IoT(아두이노,라즈베리파이-C언어책3권) 2주
 - 안드로이드앱(클라이언트)-통신-자바:스프링웹프로젝트(API서버) 2주
 
+#### 20210202(화) 작업예정
+- 사전작업: JUnit에서 더미데이터 입력시 시간 초단위로 입력 부분 처리예정. - 문제없었음. 쿼리에서 sysdate로 박혀 있어서 그랬음.
+- 그래도, JUnit으로 더미 데이터를 입력하려면, 쿼리를 바꾸던가, 아니면, 인서트호출 후 Thread.sleep(1000);입력하면 해결됨.
+- 사전작업: spring5-프로젝트 신규레포지토리 git과 연동작업예정.
+- --------------------------------------------------------------------
+- 스프링MVC프로젝트 스프링버전 5.2.5 마이그레이션(버전 업그레이드)
+- 위 스프링버전 마이그레이션이 필요한이유: 자바버전 2.x 보편화 되었을때, 톰캣버전 9.x 보편화 되었을때, 등등 이유가 있음(필수)
+- kimilguk프로젝트를 그대로 두고, spring5-kimilguk이름으로 폴더를 복사해서 프로젝트 생성됨
+- kimilguk.herokuapp.com(스프링4.x), spring5-kimilguk.herokuapp.com(스프링5.x)
+- --------------------------------------------------------------------
+- 02월03일 부터 오라클 이론 단원06 진도 시작.
+- C언어 기초: 출석수업시 바로 IoT실습에 들어가기 위해서 구름IDE에서 C언어 실습연습.
+- --------------------------------------------------------------------
+
+#### 20210201(월) 작업
+- 시작전1:replyMapper 마무리: 댓글 1개등록 후 삭제 후 다시등록시 페이징이 사라지는 문제 처리OK.
+- board_view.jsp의 삭제부분 $("#div_reply").empty(); 아래 코드로 수정.
+- $("#div_reply").find("div").not(".pagination").empty(); ->대신에 아래처럼 해도됨
+
+```
+- $("#div_reply").html('<div class="pagination justify-content-center"><ul class="pagination pageVO"></ul></div>');
+```
+- 시작전2:조회수 카운트도 필드값 null 때문에 증가가 않되는 부분 처리OK(NVL추가 아래).
+- 오라클 전용 수정할 쿼리: set view_count = NVL(view_count,0) + 1
+- 쿼리널체크: Mysql=ifnull(v1,v2),MSsql+Hsql=isnull(v1,v2)
+- 쿼리널체크: Oracle=nvl(v1,v2), NVL(Null VaLue)체크 함수.
+- 시작전3:멤버 페이지 페이징 쿼리부분에서 ORDER BY 부분제거 취소 후 더미데이터의 reg_date 수정.
+- 시작전4:게시판,댓글 페이징 부분은 정렬방식을 REG_DATE에서 BNO로 변경 취소.
+- 위3,4번 처리하는 대신 더미데이터만드는 프로시저에서 reg_date 현재시간기준 1초씩 증가하도록 처리 order by 가 제대로 작동하도록 처리OK.
+- 시작전: 더미데이터 만드는 프로시저에 REG_DATE항목을 1초 단위로 증가될 수 있도록 수정한 후 다시 더미데이터 생성한다.
+
+```
+create or replace PROCEDURE      "PROC_MEMBER_INSERT" 
+(
+  P_COUNT IN NUMBER 
+) AS 
+BEGIN
+  -- TRUNCATE table TBL_MEMBER; 삭제시 자동커밋
+  -- 실행방법: CALL PROC_MEMBER_INSERT(100);
+  FOR i IN 1..P_COUNT LOOP
+       IF(i=P_COUNT) THEN
+            INSERT INTO TBL_MEMBER
+            (user_id,user_pw,user_name,enabled,levels,reg_date,update_date)
+            VALUES
+            ('admin','$2a$10$kIqR/PTloYan/MRNiEsy6uYO6OCHVmAKR4kflVKQkJ345nqTiuGeO'
+            ,'관리자',1,'ROLE_ADMIN',sysdate + (1/24/60/60)*i,sysdate + (1/24/60/60)*i);
+        ELSE
+            INSERT INTO TBL_MEMBER
+            (user_id,user_pw,user_name,enabled,levels,reg_date,update_date)
+            VALUES
+            (concat('user',i) ,'$2a$10$kIqR/PTloYan/MRNiEsy6uYO6OCHVmAKR4kflVKQkJ345nqTiuGeO'
+            ,'사용자',1,'ROLE_USER',sysdate + (1/24/60/60)*i,sysdate + (1/24/60/60)*i);
+        END IF;
+      END LOOP;
+  commit;
+END PROC_MEMBER_INSERT;
+
+create or replace PROCEDURE      "PROC_BOARD_INSERT" 
+(
+  P_BOARD_TYPE IN VARCHAR2 
+, P_COUNT IN NUMBER 
+) AS 
+BEGIN
+  -- TRUNCATE table TBL_REPLY; 삭제시 자동커밋
+  -- TRUNCATE table TBL_ATTACH; 삭제시 자동커밋
+  -- DELETE FROM TBL_BOARD WHERE 1 = 1; 삭제시 커밋 필요 + 시퀸스 초기화 필요(초기값만 1로 바꾸면됨)
+  -- 실행방법;쿼리에디터에서 CALL PROC_BOARD_INSERT('notice',50);
+  FOR i IN 1..P_COUNT LOOP
+        INSERT INTO TBL_BOARD
+        (bno,board_type,title,content,writer,reg_date,update_date) 
+        VALUES
+        (SEQ_BNO.nextval,P_BOARD_TYPE,'게시물테스트','게시물내용테스트','관리자',SYSDATE + (1/24/60/60)*i,SYSDATE + (1/24/60/60)*i);
+      END LOOP;
+commit;
+END PROC_BOARD_INSERT;
+```
+- oracle폴더의 memberMapper, replyMapper, boardTypeMapper 3개파일 마이그레이션 OK.
+- 수정1: now() -> sysdate (현재일시구하기)
+- 수정2: limit 사용된 페이징 쿼리 -> 제거 후 기능변경(ROWNUM 키워드 사용, concat() -> ||연결문자사용)
+- 수정3: limit 사용된 조회시 최근게시물 1개 뽑아낼때 -> 제거 후 기능변경(ROWNUM 예약어 사용)
+- 수정4: < 부등호가 들어가 있는 쿼리는 <![CDATA[ 부등호가 있는 쿼리 ]]> 이렇게 CDATA로 처리.
+- 수정5: Insert의 AI(자동증가)부분 처리:마이바티스의 selectKey태그를 이용해서 시퀸스처리
+- 오늘 종료전 2월3일(수2교시) 다음카페에 제출하실 포트폴리오 구글 워드 문서 배포OK.
+
+#### 20210129(금) 작업
+- 이론 단원 05단원 까지 진도OK.
+- 오라클 전용 쿼리에서 3개이상의 문자열 연결할때 파이프라인 특수문자를 사용: ||
+- DISTINCT: 오라클 전용으로 중복데이터 삭제용도, 출력물에서 셀병합시 필요.
+- 보통 출력툴(레포트툴)이 보통 2000만원이상.
+- 자바프로그램에서 특수문자는 \s 로 s라는 문자가 아니고, 공백이라는 특수문자임을 \s 나타냄.
+- 위와 같은 \문자에서 \ 역슬래시를 이스케이프 문자라고 하고 정규표현식에서 많이 사용됨.
+- 산술연산자: +,-,*,/
+- 논리연사자: OR(+) , AND(*), NOT(!Inverse)
+- 필드명 BETWEEN a AND b: 필드값이 a 에서부터 b 까지~
+- 필드명 IN(배열) : 필드명에 배열에 있는 값이 포함되어 있는지 비교.
+- 교재용 영문테이블명: DEPT(부서테이블), EMP(사원테이블)
+- 교재용 쇼핑몰테이블: DEMO_CUSTOMERS(고객테이블), ORDERS(주문정보-부모테이블)
+- 쇼핑몰이어서: ORDER_ITEMS(주문정보상세-자식테이블)
+- 쇼핑몰이어서: PRODUCT_INFO(상품등록테이블), STATES(배송주소정보테이블)
+- 쇼핑몰이어서: DEMO_USERS(쇼핑몰관리자 직원테이블)
+- 서블렛 + JSP = 쇼핑몰 웹사이트=> 스트러츠 => 대신에 스프링으로 MVC 웹프로젝트 제작.
+- 테이블 정보(메타데이터=데이터딕셔너리=정보의정보)와  테이블 내용(데이터-예,게시판데이터) 차이 확인.
+- SQL*PLUS는 CLI(명령어라인인터페이스)와 SQL디벨러퍼는 GUI(그래픽유저인터페이스)
+- 아래 매퍼내용 수정1~5 참조해서 reply, member 쿼리 확인 후 수정조치.
+- 오라클에서 첨부파일 신규등록 확인(필수)OK.
+- 매퍼쿼리는 commit;하지 않아도 스프링이 자동 커밋해 줍니다.
+
+#### 20210128(목) 작업
+- 테스트절차: 게시물신규등록, 게시물신규등록시 첨부파일도 신규등록.
+- 이론 단원04까지 진도.
+- 매퍼(마이바티스)쿼리에서 오라클전용일때 수정할 부분요약: boardMapper.xml만 처리중.
+- 참고: Hsql용 최근게시물 ㅂ1개 뽑아낼떄: select top 1 bno from tbl_board order by bno desc
+- DELETE와 TRUNCATE 차이점: 둘다 테이블내용을 삭제하는 것은 동일.
+- DELETE: 100개의 레코드를 지우면, 내용은 지워지지만, 100개의 공간은 남아있음.
+- TRUNCATE: 100개의 레코드를 지우면, 내용도 지우고, 100개의 공간도 날아갑니다.
+- AI 자동증가 값이 DELETE이후 신규등록하면, 101 로 자동증가값이 잡힙니다.
+- TRUNCATE이후 신규등록하면, 1로 자동증가값이 잡힙니다.
+- 접속 세션에서 COMMIT;을 하지 않으면, 접속해제시 작업한 내용이 사라짐. 반드시, 커밋필요.
+- SQL*PLUS: RUN SQL Command 실행 -> CONNECT XE/apmsetup XE사용자로 접속.
+- SELECT * FROM TBL_BOARD_TYPE;
+- 시작전 어제 백업받은 DATABASE폴더에 oracle_20210127.sql 파일 복원 다같이 합니다OK.
+- 스프링 프로젝트를 오라클로 마이그레이션하기 전 이클립스 준비 작업OK.
+- ojdbc6.jar등록: 스프링에서 오라클서버에 접속하는 드라이버 클래스파일 입니다OK.
+- 이번에는 pom.xml로 외부모듈을 추가하지 X, 직접 jar파일 외부모듈을 등록하겠습니다OK.
+- 오라클 교재(IT강의저장소의교재)를 가지고 , 이론 진도 나갑니다.
+- SQL: Structured Query Language(구조화된 질의 언어) CRUD를 목적의 언어.
+- Ansi SQL: (미국)표준SQL 언어.----< 표준SQL위주로 공부하셔야 합니다.
+- 오라클회사의 전용 SQL(전용함수이용 기능많음), MS마이크로소프트회사 전용 SQL.
+- DQL(Select): Data Query Language: 데이터 질의어.
+- DDL(Crate Table, Alter Table):Data Definition Language 데이터 정의.
+- DML(Insert,Update,Delete):Data Manufacturing Language 조작언어.
+- DCL(Dump 백업, Grant-권한): Data Controll Language 데이터 제어 언어.
+- root-context.xml 에서 오라클 커넥션 bean(스프링용클래스)을 생성하고, mybatis용 쿼리 생성예정.
+
+#### 20210127(수) 작업
+- 오라클 마이그레이션 외부준비 작업OK.
+- 오라클데이터베이스 서버 관리 화면 기본 URL:8080 을 사용합니다.
+- 톰캣기반의 스프링웹프로젝트 http://localhost:8080 를 실행한 상태에서 오라클을 설치해야 8080을 피해서 9000포트로 설치할 수 있습니다.OK
+- 오라클 데이터베이스 서버설치 후 사용자 생성및 테이블스페이스 생성
+- 테이블스페이스XE(=Mysql의 스키마,DB같은의미)의 사용자XE/암호apmsetup 생성OK.
+- 오라클용 DB관리툴 [SQL디벨러퍼] 소프트웨어 압축푼 후 접속 후 ERD만들어서 물리DB로 내보내기 싱크.
+- ERD만들기: 메뉴 파일->Data Modeler->임포트->데이터딕셔너리(데이터사전=XE안의 테이블)
+- ERD만든이후 싱크맞추기(워크벤치처럼 GUI를 이용해서 만들어지지 않음)-생성된 쿼리를 수동으로 실행.
+- 토드(Toad) 유료프로그램은 워크벤치처럼 GUI로 ERD모델과 DB스키마와 싱크를 맞출 수 있습니다.
+- 오라클은 AI(오토 인크리먼트) PK(프라이머리 키)자동증가 기능없기 때문에, 대신 시퀸스(Sequence-순서)기능을 대체 합니다.
+- 프로시저: sql로 만드는 프로그램이 프로시저(PL) 목적 더미데이터 생성 (회원100명, 게시물 100개)
+-- 오라클전용 방식1: SELECT 는 항상 FROM 테이브명필요
+-- 테이블이 없는 SELECT에서는 가상테이블인 DUAL을 사용.
+-- 오라클전용 방식2: 오라클변수사용시 V_USER varchar2(20):='user'; 대입연사자 := 로대체
+-- 오라클전용 방식3: 프로시저를 생성/수정 반드시 컴파일이 필요합니다.(Mysql과는 다른점)
+-- 오라클전용 방식4: 작업 후 반드시 commit;을 해야 합니다.
+-- SQL디벨러퍼 인코딩 설정변경필요(복원시 한글이 깨질때처리): 메뉴->도구->환경설정->환경메뉴 클릭->인코딩 UTF-8변경
+-- 쿼리전용 방식1: IF같은 비교문에서 비교조건중 같다 == 등호1개 =
+-- 일반자바프로그램에서는 if(String A = 'abc') 이럴때 비교X 대입연산이 됨
+-- concat('첫번째','두번째'): 문자열 합치는 함수
+
+
+#### 20210126(화) 작업
+- boardTypeMapper.insertBoardType does not contain: 매퍼쿼리 확인해서 해결.
+- 변수와 매개변수(파라미터,인자,아규먼트,쿼리스트링 등등) 차이: 사용되는 위치에 따라서 불리는 명칭이 틀릴뿐 값을 저장하는 기능은 같습니다. 목적: 데이터 전달을 위한 중간 매개체
+- 게시판생성관리: CRUD중 미처리한 C부분 처리OK.
+- 사용자홈페이지 최신겔러리, 최신게시물 다중게시판 적용처리OK.
+- Hsql 변환 후 -> 헤로쿠에 배포OK.
+
 #### 20210125(월) 작업
-- 컨트롤러에서 PageVO 또는 BoardVO가 Get/Set필요한 순간 항상 아래의 액션이 필요
-- pageVO.setBoard_Type(session.getAttribute("session_board_type")); 페이지 진입시 항상필요
-- boardVO.setBoard_Type(session.board_type"));게시판 CRUD시 항상 필요
-- 위와 같이 MVC에서 항상 실행되는 부분을 뽑아내서 공통실행으로 만드는 과정을 AOP(관점지향프로그래밍)라고 함.
---------------------------------------------------------------------
+- 세션은 서버에서 생성되는 저장소 입니다.:웹접속시 생성된 세션을 HttpServletRequest클래스로 관리
+- 다중게시판 삭제시, 게시판타입에 해당하는 게시물이 존재하면, 삭제불가 메세지 후 삭제로직 끝내기.
+- #다중게시판: 게시판 생성기능이 포함됨.
+- @Aspect 기능으로 세션관리 : 1)DebugAdvice.java 에 sessionManager()메서드 생성
+- 게시판 타입세션을 사용. 스프링시큐리티를 사용하지 않았으면, 로그인인증체크 AOP세션으로도 처리.
+- @ControllAdvice 기능으로 @ModelAttribute List<BoardTypeVO>오브젝트반환후 jsp이용
+- 2)ControllerAdviceException.java 위 1),2)파일 오전에 작업한 주요파일.
+- ------------------------------------------------------------
+- AOP기능으로 세션관리 추가작업(아래)
+- 컨트롤러에서 PageVO또는 BoardVO가 Get/Set필요한 순간 항상 아래의 액션이 필요
+- pageVO.setBoard_type(session.getAttribute("session_board_type"));//페이지 진입시 항상필요
+- boardVO.setBoard_type(session.getAttribute("session_boartd_type"));//게시판CRUD시 항상필요
+- 위와 같이 MVC에서 항상 실행되는 부분을 뽑아내서 공통실행으로 만드는 과정을 AOP(관점지향프로그래밍)라고 합니다.
+- -----------------------------------
 - 세션변수 session_board_type를 컨트롤러,서비스,DAO,매퍼 모두VO기준 get/set발생할때 세션 변수를 사용할 예정. AOP또는 Interceptor가로채기 클래스를 이용해서 구현예정.
+- AOP로는 : session_board_type변수를 생성관리
+- ------------------------------------
+- ControllerAdvice로는 : board_type게시판타입 리스트(List<BoardTypeVO>)를 jsp 모델값으로 전송해주는 인터셉터 기능을 사용 메뉴관리.
+- DAO 에 boardTypeList를 가져올수 있는 메서드를 1개 만듭니다.
+
 - 기존 작업한 BoardVO 와 PageVO 2군데  주석처리 -> //this.board_type = "notice";//세션변수를 사용할 예정.
 (아래 DebugAdvice클래스의 AOP소스)
 
@@ -716,32 +951,6 @@ conn.close();
 #### 20201215(화) 작업
 - 인터페이스 영역(메서드명세파일-이름만존재) -implements- 임플리먼트 클래스(메서드구현파일-오버라이드된메서드명구현내용)
 - 메서드명세 메서드명 -> 오버라이드된 메서드명
-- 멘토수업신청자리스트(누락되신분은 나중에라도 말씀해 주세요.)
-
-```
-강민우
-김기명
-김범주
-김수연
-김진아
-남가인
-박정수
-배경득
-신승만
-양희망
-유우식
-이규혁
-이병현
-이시은
-이용오
-이찬홍
-이현진
-이현진
-임송하
-정도영
-정동규
-황초희
-```
 - 이클립스에서 입력힌트 나오지 않을때 조치
 window> preference> java > editor > content Assist > advanced > 체크 java Non-Type Proposals > Apply버튼클릭.
 - 자바에서 상속이라는 개념도 html css에서 나오는 상속이랑 비슷한 개념인가요?
@@ -1842,7 +2051,6 @@ function prepareButton() {
 - 데이터베이스 용어중 인덱스가 뭔지 확인: 크롬 > 개발자도구 띄웁니다.
 - 1단원: 운영체제 기초기술 활용: 버추얼박스설치,우분투실행,리눅스 명령어실행. 크라우드 가입(6개월내내사용)
 - JDK설치.
-- 박정수씨 원격 봐드리겠습니다.
 - java -version 확인
 - javac (자바컴파일러=번역기) : 
 - 영문 개발자 java코드를 기계가 알아보는 class코드로 번역해줍니다.
@@ -1851,7 +2059,6 @@ function prepareButton() {
 - 앱(안드로이드)
 - 윈도기반 - 안드로이드 스튜디오 툴기반 AVD(vt-x) -> 갤럭시폰 애뮬레이터 실행
 - 마지막 내년 4월에 위 App개발때문에 vt-x필요(학원PC로 하시면 문제 없음)
-- 이병현씨, 맥OS 부트캠프기반 윈도 설치 후 셋팅중 OpenJDK 부분 원격으로 확인
 - OpenJDK 확인: JDK 가 없으면 아래상황이 발생 됩니다.
 - 자바로 만들어진 프로그램(이클립스X, DB워크벤치X 등등)이 실행 않됩니다.
 - sudo: 수퍼유저로 명령어를 실행할때, osboxes.org(아이디) / osboxes.org(암호)
@@ -1892,13 +2099,7 @@ function prepareButton() {
 - 작업프로젝트 납품하실때, 개발환경, 실행버전, 반드시 적어야 납품이 가능하십니다.
 - vt-x: 바이오스(CMOS)에서 설정 바꿔야야 합니다.
 - CMOS바이오스 진입하는 방법 4가지(종류가 여러가지라서...)
-- PC전원을 껐다가 켜시고, 바로 [F1], [F2], [F10], [Del]
-- 박재형(OK),  정동규(OK), 정도영(OK)
-- 박정수(구름클라우드-리눅스명령어실행), 
-- 이찬홍(구름클라우드-리눅스명령어실행),
-- 임송하(구름클라우드-리눅스명령어실행),
-- 배경득(구름클라우드-리눅스명령어실행),
-- 김다혜(구름클라우드-리눅스명령어실행)
+
 - C언어 하실 때, 구름IDE 클라우드에서 C언어로 구구단, 은행입출금 프로그램 제작예정.
 - Virtualization Technology [disabled] 찾으셔서, 바꾸고 저장.
 - > [enabled] 바꾸시고, [F10] 저장후 재부팅
