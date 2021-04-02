@@ -41,7 +41,7 @@ public class NaverLoginController {
 	/* 프로필 조회 API URL -사용자 이름 + 사용자 이메일 */
 	private final static String PROFILE_API_URL = "https://openapi.naver.com/v1/nid/me";
 	
-	/* 네이버 아이디로 로그인 인증 url 생성 Metgod */
+	/* 네이버 아이디로 로그인 인증 url 생성 Method */
 	public String getAuthorizationUrl(HttpSession session) {
 		/* 세션 유효성 검증을 위하여 난수를 생성(아래) */
 		String state = generateRandomString();
