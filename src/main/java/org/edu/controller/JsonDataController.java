@@ -46,18 +46,18 @@ public class JsonDataController {
 	}
 	
 	//RestAPI서버 회원목록을 출력 기능(아래)
-	@RequestMapping(value="/android/list",method=RequestMethod.POST)
+	@RequestMapping(value="/android/list", method=RequestMethod.POST)
 	public ResponseEntity<List<MemberVO>> androidMember() {
 		ResponseEntity<List<MemberVO>> entity = null;
 		PageVO pageVO = new PageVO();
 		pageVO.setPage(1);
 		pageVO.setPerPageNum(10);
-		pageVO.setQueryPerPageNum(1000);//쿼리에서 1000명까지 허용
+		pageVO.setQueryPerPageNum(1000);//1회 쿼리에서 1000명 허용
 		try {
 			entity = new ResponseEntity<>(memberDAO.selectMember(pageVO),HttpStatus.OK);
 		} catch (Exception e) {
 			entity = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
-		return entity;
+		return entity;		
 	}
 }
